@@ -41,7 +41,6 @@ public class ChestCleaner extends JavaPlugin {
 		String version = getDescription().getVersion().replace(".", "-");
 		String bundleName = getName() + "_" + version;
 		getPlugin(this.getClass()).saveResource(bundleName + "_en_GB.properties", false);
-		getPlugin(this.getClass()).saveResource(bundleName + "_de_DE.properties", false);
 
 		try {
 			URL fileUrl = new File(this.getDataFolder().toString()).toURI().toURL();
@@ -58,10 +57,6 @@ public class ChestCleaner extends JavaPlugin {
 
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
-
-		if (PluginConfigManager.isUpdateCheckerActive()) {
-			new UpdateChecker(this).checkForUpdate();
-		}
 	}
 
 	public ResourceBundle getRB() {
