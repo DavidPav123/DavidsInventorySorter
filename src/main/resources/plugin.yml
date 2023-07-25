@@ -1,9 +1,8 @@
-name: ChestCleaner
-version: "2.4.3"
-author: Tom2208, leanNiki
+name: DavidsInventorySorter
+version: "1.0"
+author: DavidPav
 api-version: "1.20"
-
-main: chestcleaner.main.ChestCleaner
+main: io.github.davidpav123.inventorysorter.InventorySorter
 
 commands:
   cleaninventory:
