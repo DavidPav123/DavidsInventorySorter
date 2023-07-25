@@ -1,17 +1,17 @@
-package chestcleaner.main;
+package io.github.davidpavlicek123.inventorysorter;
 
-import chestcleaner.commands.SortingAdminCommand;
-import chestcleaner.commands.BlacklistCommand;
-import chestcleaner.commands.CleanInventoryCommand;
-import chestcleaner.commands.CleaningItemCommand;
-import chestcleaner.commands.SortingConfigCommand;
-import chestcleaner.config.PluginConfig;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.config.serializable.ListCategory;
-import chestcleaner.config.serializable.MasterCategory;
-import chestcleaner.config.serializable.WordCategory;
-import chestcleaner.listeners.RefillListener;
-import chestcleaner.listeners.SortingListener;
+import commands.SortingAdminCommand;
+import commands.BlacklistCommand;
+import commands.CleanInventoryCommand;
+import commands.CleaningItemCommand;
+import commands.SortingConfigCommand;
+import config.PluginConfig;
+import config.PluginConfigManager;
+import config.serializable.ListCategory;
+import config.serializable.MasterCategory;
+import config.serializable.WordCategory;
+import listeners.RefillListener;
+import listeners.SortingListener;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class ChestCleaner extends JavaPlugin {
+public class InventorySorter extends JavaPlugin {
 
 	public static ChestCleaner main;
 	private ResourceBundle rb;
