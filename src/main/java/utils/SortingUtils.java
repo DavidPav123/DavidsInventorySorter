@@ -1,16 +1,16 @@
-package chestcleaner.utils;
+package utils;
 
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.cooldown.CMRegistry;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import config.PluginConfigManager;
+import cooldown.CMRegistry;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import chestcleaner.sorting.InventorySorter;
-import chestcleaner.utils.messages.MessageSystem;
+import sorting.InventorySorter;
+import utils.messages.MessageSystem;
 
 public class SortingUtils {
 

@@ -1,14 +1,14 @@
-package chestcleaner.sorting;
+package sorting;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import chestcleaner.config.PlayerDataManager;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import config.PlayerDataManager;
+import config.PluginConfigManager;
+import utils.PluginPermissions;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,8 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.utils.InventoryConverter;
-import chestcleaner.utils.InventoryDetector;
+import utils.InventoryConverter;
+import utils.InventoryDetector;
 
 public class InventorySorter {
 

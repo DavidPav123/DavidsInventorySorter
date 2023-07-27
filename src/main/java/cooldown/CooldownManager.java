@@ -1,4 +1,4 @@
-package chestcleaner.cooldown;
+package cooldown;
 
 public interface CooldownManager {
 

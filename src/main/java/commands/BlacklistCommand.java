@@ -1,13 +1,13 @@
-package chestcleaner.commands;
+package commands;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import chestcleaner.commands.datastructures.CommandTuple;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.commands.datastructures.CommandTree;
+import commands.datastructures.CommandTuple;
+import config.PluginConfigManager;
+import commands.datastructures.CommandTree;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,9 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 
 /**
  * A command class representing the blacklist command. Blacklist Command

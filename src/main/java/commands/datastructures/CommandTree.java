@@ -1,15 +1,15 @@
-package chestcleaner.commands.datastructures;
+package commands.datastructures;
 
-import chestcleaner.commands.BlacklistCommand;
-import chestcleaner.commands.SortingAdminCommand;
-import chestcleaner.cooldown.CMRegistry;
-import chestcleaner.cooldown.CooldownManager;
-import chestcleaner.sorting.CategorizerManager;
-import chestcleaner.sorting.SortingPattern;
-import chestcleaner.sorting.categorizer.Categorizer;
-import chestcleaner.utils.SortingAdminUtils;
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageType;
+import commands.BlacklistCommand;
+import commands.SortingAdminCommand;
+import cooldown.CMRegistry;
+import cooldown.CooldownManager;
+import sorting.CategorizerManager;
+import sorting.SortingPattern;
+import sorting.categorizer.Categorizer;
+import utils.SortingAdminUtils;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;

@@ -1,4 +1,4 @@
-package chestcleaner.sorting;
+package sorting;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

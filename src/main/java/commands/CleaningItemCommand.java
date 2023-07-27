@@ -1,14 +1,14 @@
-package chestcleaner.commands;
+package commands;
 
-import chestcleaner.commands.datastructures.CommandTuple;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.cooldown.CMRegistry;
-import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.StringUtils;
-import chestcleaner.commands.datastructures.CommandTree;
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import commands.datastructures.CommandTuple;
+import config.PluginConfigManager;
+import cooldown.CMRegistry;
+import utils.PluginPermissions;
+import utils.StringUtils;
+import commands.datastructures.CommandTree;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;

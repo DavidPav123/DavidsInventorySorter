@@ -1,7 +1,7 @@
-package chestcleaner.sorting.categorizer;
+package sorting.categorizer;
 
-import chestcleaner.config.serializable.MasterCategory;
-import chestcleaner.sorting.CategorizerManager;
+import config.serializable.MasterCategory;
+import sorting.CategorizerManager;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

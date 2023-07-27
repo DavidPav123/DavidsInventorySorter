@@ -1,4 +1,4 @@
-package chestcleaner.config.serializable;
+package config.serializable;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;

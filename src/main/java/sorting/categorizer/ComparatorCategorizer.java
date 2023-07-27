@@ -1,6 +1,6 @@
-package chestcleaner.sorting.categorizer;
+package sorting.categorizer;
 
-import chestcleaner.utils.Quicksort;
+import utils.Quicksort;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

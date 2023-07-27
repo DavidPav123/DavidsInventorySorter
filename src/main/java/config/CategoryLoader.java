@@ -1,13 +1,13 @@
-package chestcleaner.config;
+package config;
 
-import chestcleaner.config.serializable.ListCategory;
-import chestcleaner.config.serializable.MasterCategory;
-import chestcleaner.config.serializable.WordCategory;
-import chestcleaner.sorting.CategorizerManager;
-import chestcleaner.sorting.categorizer.ComparatorCategorizer;
-import chestcleaner.sorting.categorizer.ListCategoryCategorizer;
-import chestcleaner.sorting.categorizer.MasterCategorizer;
-import chestcleaner.sorting.categorizer.PredicateCategorizer;
+import config.serializable.ListCategory;
+import config.serializable.MasterCategory;
+import config.serializable.WordCategory;
+import sorting.CategorizerManager;
+import sorting.categorizer.ComparatorCategorizer;
+import sorting.categorizer.ListCategoryCategorizer;
+import sorting.categorizer.MasterCategorizer;
+import sorting.categorizer.PredicateCategorizer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;

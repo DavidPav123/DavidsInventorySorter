@@ -1,13 +1,13 @@
-package chestcleaner.commands;
+package commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import chestcleaner.commands.datastructures.CommandTree;
-import chestcleaner.commands.datastructures.CommandTuple;
-import chestcleaner.cooldown.CMRegistry;
-import chestcleaner.utils.SortingUtils;
+import commands.datastructures.CommandTree;
+import commands.datastructures.CommandTuple;
+import cooldown.CMRegistry;
+import utils.SortingUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,13 +18,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import chestcleaner.sorting.InventorySorter;
-import chestcleaner.utils.BlockDetector;
-import chestcleaner.utils.InventoryDetector;
-import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import sorting.InventorySorter;
+import utils.BlockDetector;
+import utils.InventoryDetector;
+import utils.PluginPermissions;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 
 /**
  * A command class representing the CleanInventory command. CleanInventory

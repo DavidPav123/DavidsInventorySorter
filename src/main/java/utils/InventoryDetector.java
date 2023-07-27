@@ -1,4 +1,4 @@
-package chestcleaner.utils;
+package utils;
 
 import java.util.ArrayList;
 

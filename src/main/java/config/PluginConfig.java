@@ -1,9 +1,9 @@
-package chestcleaner.config;
+package config;
 
-import chestcleaner.config.serializable.ListCategory;
-import chestcleaner.config.serializable.MasterCategory;
-import chestcleaner.config.serializable.WordCategory;
-import chestcleaner.main.ChestCleaner;
+import config.serializable.ListCategory;
+import config.serializable.MasterCategory;
+import config.serializable.WordCategory;
+import com.github.davidpav123.inventorysorter.InventorySorter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -27,9 +27,9 @@ public class PluginConfig {
 	private FileConfiguration playerDataConfig;
 
 	protected PluginConfig() {
-		ChestCleaner.main.saveDefaultConfig();
-		ChestCleaner.main.getConfig().options().copyDefaults(true);
-		playerDataFile = new File("plugins/" + ChestCleaner.main.getName(), "playerdata.yml");
+		InventorySorter.main.saveDefaultConfig();
+		InventorySorter.main.getConfig().options().copyDefaults(true);
+		playerDataFile = new File("plugins/" + InventorySorter.main.getName(), "playerdata.yml");
 		playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
 	}
 
@@ -39,12 +39,12 @@ public class PluginConfig {
 	 */
 	public void loadConfig() {
 
-		FileConfiguration config = ChestCleaner.main.getConfig();
+		FileConfiguration config = InventorySorter.main.getConfig();
 	    // Locale
 		String language = config.getString(ConfigPath.LOCALE_LANGUAGE.getPath());
 		String country = config.getString(ConfigPath.LOCALE_COUNTRY.getPath());
-		String variant = ChestCleaner.main.getDescription().getVersion().replace(".", "-");
-		ChestCleaner.main.setLocale(language, country, variant);
+		String variant = InventorySorter.main.getDescription().getVersion().replace(".", "-");
+		InventorySorter.main.setLocale(language, country, variant);
 		// Categorizers
 
 		CategoryLoader.loadCategorizers(
@@ -53,21 +53,21 @@ public class PluginConfig {
 				(List<MasterCategory>) config.getList(ConfigPath.CATEGORIES_MASTER.getPath())
 		);
 
-		ChestCleaner.main.saveConfig();
+		InventorySorter.main.saveConfig();
 	}
 	
 	public static FileConfiguration getConfig() {
-		return ChestCleaner.main.getConfig();
+		return InventorySorter.main.getConfig();
 	}
 
 	public static void setIntoConfig(ConfigPath path, Object obj) {
-		ChestCleaner.main.getConfig().set(path.getPath(), obj);
-		ChestCleaner.main.saveConfig();
+		InventorySorter.main.getConfig().set(path.getPath(), obj);
+		InventorySorter.main.saveConfig();
 	}
 	
 	public static void setIntoConfig(String path, Object obj) {
-		ChestCleaner.main.getConfig().set(path, obj);
-		ChestCleaner.main.saveConfig();
+		InventorySorter.main.getConfig().set(path, obj);
+		InventorySorter.main.saveConfig();
 	}
 	
 	public static void removeFormConfig() {

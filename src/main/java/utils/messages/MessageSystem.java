@@ -1,15 +1,15 @@
-package chestcleaner.utils.messages;
+package utils.messages;
 
-import chestcleaner.utils.PluginPermissions;
+import utils.PluginPermissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import chestcleaner.config.PlayerDataManager;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.main.ChestCleaner;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import config.PlayerDataManager;
+import config.PluginConfigManager;
+import com.github.davidpav123.inventorysorter.InventorySorter;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class MessageSystem {
 		if (cs != null) {
 			cs.sendMessage(getMessageString(type, arg));
 		} else {
-			ChestCleaner.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
+			InventorySorter.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
 		}
 	}
 	
@@ -40,7 +40,7 @@ public class MessageSystem {
 	}
 	
 	public static void sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {
-		sendMessageToCS(type, ChestCleaner.main.getRB().getString(messageID.getID()), cs);
+		sendMessageToCS(type, InventorySorter.main.getRB().getString(messageID.getID()), cs);
 	}
 
 	public static void sendConsoleMessage(MessageType type, MessageID messageID) {
@@ -60,7 +60,7 @@ public class MessageSystem {
 	 */
 	public static void sendMessageToCSWithReplacement(MessageType type, MessageID messageID, CommandSender cs,
 			Object... replacement) {
-		String message = ChestCleaner.main.getRB().getString(messageID.getID());
+		String message = InventorySorter.main.getRB().getString(messageID.getID());
 		sendMessageToCS(type, String.format(message, replacement), cs);
 	}
 
@@ -111,20 +111,20 @@ public class MessageSystem {
 
 	private static String getMessageString(MessageType type, String arg) {
 
-		String out = ChestCleaner.main.getRB().getString(MessageID.COMMON_PREFIX.getID()) + " ";
+		String out = InventorySorter.main.getRB().getString(MessageID.COMMON_PREFIX.getID()) + " ";
 
 		switch (type) {
 		case SYNTAX_ERROR:
-			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.COMMON_ERROR_SYNTAX.getID()) + ": " + arg;
+			out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.COMMON_ERROR_SYNTAX.getID()) + ": " + arg;
 			break;
 		case ERROR:
-			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.COMMON_ERROR.getID()) + ": " + arg;
+			out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.COMMON_ERROR.getID()) + ": " + arg;
 			break;
 		case SUCCESS:
 			out += ChatColor.GREEN + arg;
 			break;
 		case MISSING_PERMISSION:
-			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.ERROR_PERMISSION.getID())
+			out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.ERROR_PERMISSION.getID())
 					+ " (" + arg + ")";
 			break;
 		case UNHEADED_INFORMATION:

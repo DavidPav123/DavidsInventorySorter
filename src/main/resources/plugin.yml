@@ -2,7 +2,7 @@ name: DavidsInventorySorter
 version: "1.0"
 author: DavidPav
 api-version: "1.20"
-main: io.github.davidpav123.inventorysorter.InventorySorter
+main: com.github.davidpav123.inventorysorter.InventorySorter
 
 commands:
   cleaninventory:
@@ -103,7 +103,7 @@ permissions:
     children:
       chestcleaner.cmd.cleaninventory.sort: true
       chestcleaner.cmd.cleaninventory.own: true
-      chestcleaner.cmd.cleaninventory.others: true  
+      chestcleaner.cmd.cleaninventory.others: true
   chestcleaner.cmd.admin.*:
     description: allow all changes to the defaults
     children:
@@ -141,4 +141,3 @@ permissions:
     description: whether the player can use the /cleaningitem set command
   chestcleaner.cmd.admin.cleaningitem.setlore:
     description: whether the player can use the /cleaningitem lore command
-

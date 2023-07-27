@@ -1,11 +1,10 @@
-package chestcleaner.cooldown;
+package cooldown;
 
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
-import org.apache.commons.lang.NullArgumentException;
+import config.PluginConfigManager;
+import utils.PluginPermissions;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class PlayerCM implements CooldownManager {
         this.msgId = msgId;
         this.id = id;
         map = new HashMap<>();
-        if (id == null) throw new NullArgumentException("The CMId is not allowed to be null.");
+        if (id == null) throw new IllegalArgumentException("The CMId is not allowed to be null.");
     }
 
     @Override

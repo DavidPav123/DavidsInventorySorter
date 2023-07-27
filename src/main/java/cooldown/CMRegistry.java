@@ -1,6 +1,6 @@
-package chestcleaner.cooldown;
+package cooldown;
 
-import chestcleaner.utils.messages.enums.MessageID;
+import utils.messages.enums.MessageID;
 
 import java.util.HashMap;
 import java.util.Map;

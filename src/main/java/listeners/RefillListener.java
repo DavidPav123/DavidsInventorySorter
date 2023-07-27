@@ -1,4 +1,4 @@
-package chestcleaner.listeners;
+package listeners;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -15,11 +15,11 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.config.PlayerDataManager;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.main.ChestCleaner;
-import chestcleaner.utils.InventoryDetector;
-import chestcleaner.utils.PluginPermissions;
+import config.PlayerDataManager;
+import config.PluginConfigManager;
+import com.github.davidpav123.inventorysorter.InventorySorter;
+import utils.InventoryDetector;
+import utils.PluginPermissions;
 
 public class RefillListener implements org.bukkit.event.Listener {
 
@@ -166,7 +166,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 						if (player.getInventory().getItemInMainHand().equals(item)) {
 
-							ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+							InventorySorter.main.getServer().getScheduler().scheduleSyncDelayedTask(InventorySorter.main,
 									() -> {
 										player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
 												refillItem);
@@ -174,7 +174,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 									}, 1L);
 
 						} else if (player.getInventory().getItemInOffHand().equals(item)) {
-							ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+							InventorySorter.main.getServer().getScheduler().scheduleSyncDelayedTask(InventorySorter.main,
 									() -> {
 										player.getInventory().setItem(40, refillItem);
 										player.getInventory().setItem(refillSlot, null);
@@ -309,7 +309,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	 */
 	private void refillConsumableInSlot(int hand, Player player, ItemStack conItem) {
 
-		ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main, () -> {
+		InventorySorter.main.getServer().getScheduler().scheduleSyncDelayedTask(InventorySorter.main, () -> {
 
 			ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
 			for (int i = 0; i < 36; i++) {

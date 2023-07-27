@@ -1,6 +1,6 @@
-package chestcleaner.config;
+package config;
 
-import chestcleaner.sorting.SortingPattern;
+import sorting.SortingPattern;
 import org.bukkit.entity.Player;
 
 import java.util.List;

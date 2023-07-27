@@ -1,4 +1,4 @@
-package chestcleaner.sorting;
+package sorting;
 
 import java.util.Arrays;
 import java.util.List;

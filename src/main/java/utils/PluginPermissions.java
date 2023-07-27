@@ -1,4 +1,4 @@
-package chestcleaner.utils;
+package utils;
 
 public enum PluginPermissions {
 

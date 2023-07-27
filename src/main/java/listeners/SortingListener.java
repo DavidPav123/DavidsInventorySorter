@@ -1,6 +1,6 @@
-package chestcleaner.listeners;
+package listeners;
 
-import chestcleaner.cooldown.CMRegistry;
+import cooldown.CMRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,14 +17,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import chestcleaner.config.PlayerDataManager;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.sorting.InventorySorter;
-import chestcleaner.utils.BlockDetector;
-import chestcleaner.utils.InventoryDetector;
-import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.SortingUtils;
-import chestcleaner.utils.messages.MessageSystem;
+import config.PlayerDataManager;
+import config.PluginConfigManager;
+import sorting.InventorySorter;
+import utils.BlockDetector;
+import utils.InventoryDetector;
+import utils.PluginPermissions;
+import utils.SortingUtils;
+import utils.messages.MessageSystem;
 
 /**
  * @author Tom2208

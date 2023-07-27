@@ -1,17 +1,17 @@
-package chestcleaner.config;
+package config;
 
-import chestcleaner.config.serializable.Category;
-import chestcleaner.config.serializable.ListCategory;
-import chestcleaner.config.serializable.MasterCategory;
-import chestcleaner.config.serializable.WordCategory;
-import chestcleaner.cooldown.CMRegistry;
-import chestcleaner.sorting.SortingPattern;
-import chestcleaner.sorting.categorizer.Categorizer;
-import chestcleaner.sorting.categorizer.ListCategoryCategorizer;
-import chestcleaner.sorting.categorizer.MasterCategorizer;
-import chestcleaner.sorting.categorizer.PredicateCategorizer;
+import config.serializable.Category;
+import config.serializable.ListCategory;
+import config.serializable.MasterCategory;
+import config.serializable.WordCategory;
+import cooldown.CMRegistry;
+import sorting.SortingPattern;
+import sorting.categorizer.Categorizer;
+import sorting.categorizer.ListCategoryCategorizer;
+import sorting.categorizer.MasterCategorizer;
+import sorting.categorizer.PredicateCategorizer;
 
-import chestcleaner.utils.SortingAdminUtils;
+import utils.SortingAdminUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;

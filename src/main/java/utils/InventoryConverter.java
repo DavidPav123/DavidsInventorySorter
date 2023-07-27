@@ -1,15 +1,15 @@
-package chestcleaner.utils;
+package utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import chestcleaner.config.PluginConfigManager;
+import config.PluginConfigManager;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.sorting.SortingPattern;
+import sorting.SortingPattern;
 
 public class InventoryConverter {
 

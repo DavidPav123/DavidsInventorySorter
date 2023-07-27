@@ -1,14 +1,8 @@
-package chestcleaner.sorting.categorizer;
+package sorting.categorizer;
 
-import chestcleaner.sorting.CategorizerManager;
-import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class Categorizer {
