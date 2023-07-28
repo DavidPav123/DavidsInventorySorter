@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * This is a singleton class to combine all configs and their utility methods
  * for this project.
- * 
+ *
  * @author Tom2208
  *
  */
@@ -23,10 +23,11 @@ public class PluginConfig {
 
 	private static PluginConfig instance = null;
 
-	private File playerDataFile;
-	private FileConfiguration playerDataConfig;
+	private final File playerDataFile;
+	private final FileConfiguration playerDataConfig;
 
 	protected PluginConfig() {
+		assert InventorySorter.main != null;
 		InventorySorter.main.saveDefaultConfig();
 		InventorySorter.main.getConfig().options().copyDefaults(true);
 		playerDataFile = new File("plugins/" + InventorySorter.main.getName(), "playerdata.yml");
@@ -39,6 +40,7 @@ public class PluginConfig {
 	 */
 	public void loadConfig() {
 
+		assert InventorySorter.main != null;
 		FileConfiguration config = InventorySorter.main.getConfig();
 	    // Locale
 		String language = config.getString(ConfigPath.LOCALE_LANGUAGE.getPath());
@@ -55,8 +57,9 @@ public class PluginConfig {
 
 		InventorySorter.main.saveConfig();
 	}
-	
+
 	public static FileConfiguration getConfig() {
+		assert InventorySorter.main != null;
 		return InventorySorter.main.getConfig();
 	}
 
@@ -64,16 +67,16 @@ public class PluginConfig {
 		InventorySorter.main.getConfig().set(path.getPath(), obj);
 		InventorySorter.main.saveConfig();
 	}
-	
+
 	public static void setIntoConfig(String path, Object obj) {
 		InventorySorter.main.getConfig().set(path, obj);
 		InventorySorter.main.saveConfig();
 	}
-	
+
 	public static void removeFormConfig() {
-		
+
 	}
-	
+
 	public static FileConfiguration getPlayerData() {
 		return getInstance().playerDataConfig;
 	}
@@ -84,10 +87,10 @@ public class PluginConfig {
 	}
 
 	/**
-	 * Saves this {@code FileConfiguration} to the the ChestCleaner folder. If the
+	 * Saves this {@code FileConfiguration} to the ChestCleaner folder. If the
 	 * file does not exist, it will be created. If it already exists, it will be
 	 * overwritten.
-	 * 
+	 *
 	 * This method will save using the system default encoding, or possibly using
 	 * UTF8.
 	 *
@@ -112,7 +115,7 @@ public class PluginConfig {
 
 	/**
 	 * Returns the instance of this singleton if it's null it creates one.
-	 * 
+	 *
 	 * @return The Instance of the singleton.
 	 */
 	public static PluginConfig getInstance() {
@@ -150,8 +153,8 @@ public class PluginConfig {
 		DEFAULT_SORTING_SOUND_VOLUME("default.sorting.sound.volume"),
 		DEFAULT_SORTING_SOUND_PITCH("default.sorting.sound.pitch"),
 		DEFAULT_BREAKABLE_ITEMS_REFILL("default.refill.breakables");
-		
-		private String path;
+
+		private final String path;
 
 		ConfigPath(String path) {
 			this.path = path;
@@ -174,7 +177,7 @@ public class PluginConfig {
 		REFILL_BREAKABLE_ITEMS("refill.breakableitems"),
 		CLICK_SORT("clicksort");
 
-		private String path;
+		private final String path;
 
 		PlayerDataPath(String path) {
 			this.path = path;

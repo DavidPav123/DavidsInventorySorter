@@ -1,5 +1,6 @@
 package config.serializable;
 
+import org.jetbrains.annotations.NotNull;
 import utils.StringUtils;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +36,7 @@ public class ListCategory implements Category<List<String>> {
     }
 
     @Override
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         Map<String, Object> result = new HashMap<>();
         result.put(nameKey, this.name);
         result.put(listKey, this.list);

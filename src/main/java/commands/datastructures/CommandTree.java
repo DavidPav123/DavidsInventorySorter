@@ -20,12 +20,11 @@ import org.bukkit.util.StringUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * A acyclic directed tree structure representing a command. A node holds an alias and a lambda Consumer.
+ * An acyclic directed tree structure representing a command. A node holds an alias and a lambda Consumer.
  * It offers many useful methods that reduces the work which needs to be done creating new spigot command.
  * @see <a href="https://github.com/tom2208/ChestCleaner/wiki/CommandTree">GitHub Wiki: CommandTree</a>
  */
@@ -37,11 +36,10 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     public void execute(CommandSender sender, Command command, String alias, String[] args) {
 
-        //TODO reorder so int types etc comes before string
 
-        GraphNode<Quadruple> node = getRoot();
+        GraphNode<Quadruple> node = root;
 
-        if ((args.length == 0 && node.getValue().consumer != null) || node.getValue().definiteExecute) {
+        if ((args.length == 0 && node.value.consumer != null) || node.value.definiteExecute) {
             executeNode(node, sender, command, alias, args);
             return;
         }
@@ -60,7 +58,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             } else {
                 node = nextNode;
             }
-            if ((isLast || node.getValue().definiteExecute) && nextNode != null) {
+            if ((isLast || node.value.definiteExecute) && nextNode != null) {
                 executeNode(node, sender, command, alias, args);
                 return;
             }
@@ -69,9 +67,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     }
 
     private void executeNode(GraphNode<Quadruple> node, CommandSender sender, Command command, String alias, String[] args) {
-        if (node.getValue().consumer != null) {
+        if (node.value.consumer != null) {
             CommandTuple tuple = new CommandTuple(sender, command, alias, args);
-            node.getValue().consumer.accept(tuple);
+            node.value.consumer.accept(tuple);
         } else {
             MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, buildSyntax(node), sender);
         }
@@ -79,9 +77,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     private Object getInterpretedObjByNodeType(String str, GraphNode<Quadruple> node) {
 
-        Predicate<Class<?>> isType = c -> node.getValue().type.equals(c);
+        Predicate<Class<?>> isType = c -> node.value.type.equals(c);
 
-        if (node == null || node.getValue().type == null) {
+        if (node == null || node.value.type == null) {
             return null;
         }
 
@@ -89,7 +87,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         else if(isType.test(CMRegistry.CMIdentifier.class)){
             List<CMRegistry.CMIdentifier> list =
                     Arrays.stream(CMRegistry.CMIdentifier.values()).
-                            filter(c -> c.toString().equalsIgnoreCase(str)).collect(Collectors.toList());
+                            filter(c -> c.toString().equalsIgnoreCase(str)).toList();
 
             if (list.size() > 0) {
                 return list.get(0);
@@ -152,7 +150,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         }
 
         // Boolean
-        else if (node.getValue().type.equals(Boolean.class)) {
+        else if (node.value.type.equals(Boolean.class)) {
             if (str.equalsIgnoreCase("true")) {
                 return Boolean.TRUE;
             } else if (str.equalsIgnoreCase("false")) {
@@ -163,7 +161,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         // SortingPattern
         else if(isType.test(SortingPattern.class)){
             List<?> list = Arrays.stream(SortingPattern.values()).
-                    filter(p -> p.toString().equalsIgnoreCase(str)).collect(Collectors.toList());
+                    filter(p -> p.toString().equalsIgnoreCase(str)).toList();
             if(list.size() > 0){
                 return list.get(0);
             }
@@ -173,7 +171,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     }
 
     private boolean isTypeNode(GraphNode<Quadruple> node) {
-        return node != null && node.getValue().type != null;
+        return node != null && node.value.type != null;
     }
 
     /**
@@ -213,11 +211,11 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
      */
     public void addPath(String path, Consumer<CommandTuple> consumer, Class<?> type, boolean definiteExecute) {
         String[] args = path.split(" ");
-        GraphNode<Quadruple> node = getRoot();
-        if (path.equalsIgnoreCase("/" + getRoot().getValue().label)) {
-            getRoot().getValue().consumer = consumer;
-            getRoot().getValue().type = type;
-            getRoot().getValue().definiteExecute = definiteExecute;
+        GraphNode<Quadruple> node = root;
+        if (path.equalsIgnoreCase("/" + root.value.label)) {
+            root.value.consumer = consumer;
+            root.value.type = type;
+            root.value.definiteExecute = definiteExecute;
             return;
         }
 
@@ -236,9 +234,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             }
 
             if (isLastElement) {
-                tempNode.getValue().consumer = consumer;
-                tempNode.getValue().type = type;
-                tempNode.getValue().definiteExecute = definiteExecute;
+                tempNode.value.consumer = consumer;
+                tempNode.value.type = type;
+                tempNode.value.definiteExecute = definiteExecute;
                 reorderChildren(tempNode.getParents().get(0));
             }
             node = tempNode;
@@ -249,7 +247,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     private void reorderChildren(GraphNode<Quadruple> node) {
         List<GraphNode<Quadruple>> stringValueNodes = new ArrayList<>();
         for (GraphNode<Quadruple> child : node.getChildren()) {
-            if (child.getValue().type != null && child.getValue().type.equals(String.class)) {
+            if (child.value.type != null && child.value.type.equals(String.class)) {
                 stringValueNodes.add(child);
             }
         }
@@ -280,7 +278,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
                 list.addAll(genNodeCompletions(child));
             }
         }
-        if (lastNode.getValue().definiteExecute) {
+        if (lastNode.value.definiteExecute) {
             list.addAll(genNodeCompletions(lastNode));
         }
         return list;
@@ -294,12 +292,12 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
      */
     private List<GraphNode<Quadruple>> getPathNodeList(String[] args) {
         List<GraphNode<Quadruple>> elements = new ArrayList<>();
-        GraphNode<Quadruple> node = getRoot();
+        GraphNode<Quadruple> node = root;
         elements.add(node);
         for (String arg : args) {
             boolean found = false;
             for (GraphNode<Quadruple> child : node.getChildren()) {
-                if (child.getValue().label.equalsIgnoreCase(arg)) {
+                if (child.value.label.equalsIgnoreCase(arg)) {
                     found = true;
                     elements.add(child);
                     node = child;
@@ -327,9 +325,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     private List<String> genNodeCompletions(GraphNode<Quadruple> node) {
         List<String> list = new ArrayList<>();
-        Predicate<Class<?>> isType = c -> c.equals(node.getValue().type);
-        if (node.getValue().type == null) {
-            list.add(node.getValue().label);
+        Predicate<Class<?>> isType = c -> c.equals(node.value.type);
+        if (node.value.type == null) {
+            list.add(node.value.label);
         } else if (isType.test(Player.class)) {
             list = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         } else if (isType.test(BlacklistCommand.BlacklistType.class)) {
@@ -366,7 +364,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         if (node.hasChild()) {
             syntax = new StringBuilder("<");
             for (GraphNode<Quadruple> child : node.getChildren()) {
-                syntax.append(child.getValue().label).append(", ");
+                syntax.append(child.value.label).append(", ");
             }
             syntax = new StringBuilder(syntax.substring(0, syntax.length() - 2).concat(">"));
         }
@@ -374,10 +372,10 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         GraphNode<Quadruple> nextNode = node;
 
         do {
-            if (nextNode.getValue().type == null) {
-                syntax.insert(0, nextNode.getValue().label + " ");
+            if (nextNode.value.type == null) {
+                syntax.insert(0, nextNode.value.label + " ");
             } else {
-                syntax.insert(0, "<" + nextNode.getValue().label + "> ");
+                syntax.insert(0, "<" + nextNode.value.label + "> ");
             }
             if (nextNode.hasParent()) nextNode = nextNode.getParents().get(0);
             else nextNode = null;
@@ -390,7 +388,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         for (GraphNode<Quadruple> n : node.getChildren()) {
 
-            if (n.getValue().label.equals(string) && n.getValue().type == null) {
+            if (n.value.label.equals(string) && n.value.type == null) {
                 return n;
             }
 
@@ -427,27 +425,4 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     }
 
-    class DataType {
-
-        private Class<?> c;
-        private Function<GraphNode<Quadruple>, List<String>> genNodeCompletions;
-        private Function<Map.Entry<GraphNode<Quadruple>, String>, Object> interpretString;
-
-
-        public DataType(Class<?> c, Function<GraphNode<Quadruple>, List<String>> genNodeCompletions,
-                        Function<Map.Entry<GraphNode<Quadruple>, String>, Object> interpretString) {
-            this.c = c;
-            this.genNodeCompletions = genNodeCompletions;
-            this.interpretString = interpretString;
-        }
-
-        public List<String> getNodeCompletions(GraphNode<Quadruple> node) {
-            return genNodeCompletions.apply(node);
-        }
-
-        public Object getInterpretedObjByNodeType(GraphNode<Quadruple> node, String str) {
-            Map.Entry<GraphNode<Quadruple>, String> e = new AbstractMap.SimpleEntry<>(node, str);
-            return interpretString.apply(e);
-        }
-    }
 }

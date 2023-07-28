@@ -12,6 +12,7 @@ import utils.messages.enums.MessageID;
 import utils.messages.enums.MessageType;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MessageSystem {
 
@@ -19,28 +20,30 @@ public class MessageSystem {
 		if (cs != null) {
 			cs.sendMessage(getMessageString(type, arg));
 		} else {
+			assert InventorySorter.main != null;
 			InventorySorter.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
 		}
 	}
-	
+
 	public static void sendSortedMessage(CommandSender sender) {
-		
+
 		boolean flag;
-		
+
 		if(sender instanceof Player && PlayerDataManager.containsNotification((Player) sender)) {
 			flag = PlayerDataManager.isNotification((Player) sender);
 		}else {
 			flag = PluginConfigManager.getDefaultChatNotificationBoolean();
 		}
-		
+
 		if(flag) {
 			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, sender);
-		} 
-		
+		}
+
 	}
-	
+
 	public static void sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {
-		sendMessageToCS(type, InventorySorter.main.getRB().getString(messageID.getID()), cs);
+		assert InventorySorter.main != null;
+		sendMessageToCS(type, Objects.requireNonNull(InventorySorter.main.getRB()).getString(messageID.getID()), cs);
 	}
 
 	public static void sendConsoleMessage(MessageType type, MessageID messageID) {
@@ -51,7 +54,6 @@ public class MessageSystem {
 	 * Sends a message with the MessageID {@code messageID} and the MessageType
 	 * {@code messageType} to the CommandSender {@code cs} (player or console)
 	 * replacing placeholder using java's String.format(str, args)
-	 * see https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html#syntax for details
 	 *
 	 * @param type        the MessageType of the message.
 	 * @param messageID   the MessageID of the Message.
@@ -60,7 +62,8 @@ public class MessageSystem {
 	 */
 	public static void sendMessageToCSWithReplacement(MessageType type, MessageID messageID, CommandSender cs,
 			Object... replacement) {
-		String message = InventorySorter.main.getRB().getString(messageID.getID());
+		assert InventorySorter.main != null;
+		String message = Objects.requireNonNull(InventorySorter.main.getRB()).getString(messageID.getID());
 		sendMessageToCS(type, String.format(message, replacement), cs);
 	}
 
@@ -111,27 +114,20 @@ public class MessageSystem {
 
 	private static String getMessageString(MessageType type, String arg) {
 
-		String out = InventorySorter.main.getRB().getString(MessageID.COMMON_PREFIX.getID()) + " ";
+		assert InventorySorter.main != null;
+		String out = Objects.requireNonNull(InventorySorter.main.getRB()).getString(MessageID.COMMON_PREFIX.getID()) + " ";
 
 		switch (type) {
-		case SYNTAX_ERROR:
-			out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.COMMON_ERROR_SYNTAX.getID()) + ": " + arg;
-			break;
-		case ERROR:
-			out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.COMMON_ERROR.getID()) + ": " + arg;
-			break;
-		case SUCCESS:
-			out += ChatColor.GREEN + arg;
-			break;
-		case MISSING_PERMISSION:
-			out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.ERROR_PERMISSION.getID())
-					+ " (" + arg + ")";
-			break;
-		case UNHEADED_INFORMATION:
-			out = ChatColor.GRAY + arg;
-			break;
-		default:
-			throw new IllegalArgumentException();
+			case SYNTAX_ERROR ->
+					out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.COMMON_ERROR_SYNTAX.getID()) + ": " + arg;
+			case ERROR ->
+					out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.COMMON_ERROR.getID()) + ": " + arg;
+			case SUCCESS -> out += ChatColor.GREEN + arg;
+			case MISSING_PERMISSION ->
+					out += ChatColor.RED + InventorySorter.main.getRB().getString(MessageID.ERROR_PERMISSION.getID())
+							+ " (" + arg + ")";
+			case UNHEADED_INFORMATION -> out = ChatColor.GRAY + arg;
+			default -> throw new IllegalArgumentException();
 		}
 
 		return out;

@@ -27,17 +27,17 @@ public class PluginConfigManager {
 	private static List<Material> blacklistStacking = null;
 	private static List<Material> blacklistInventory = null;
 	private static List<Material> blacklistAutorefill = null;
-	
+
 	private PluginConfigManager() {}
-	
+
 	public static boolean isDefaultClickSort(){
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_CLICKSORT.getPath());
 	}
-	
+
 	public static void setDefaultClickSort(boolean b) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_CLICKSORT, b);
 	}
-	
+
 	public static boolean isDefaultBreakableRefill() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_BREAKABLE_ITEMS_REFILL.getPath());
 	}
@@ -74,19 +74,19 @@ public class PluginConfigManager {
 	public static void setDefaultSortingSoundBoolean(boolean bool) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN, bool);
 	}
-	
+
 	public static boolean getDefaultSortingSoundBoolean() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN.getPath());
 	}
-	
+
 	public static void setDefaultChatNotificationBoolean(boolean bool) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CHAT_NOTIFICATION_BOOLEAN, bool);
 	}
-	
+
 	public static boolean getDefaultChatNotificationBoolean() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CHAT_NOTIFICATION_BOOLEAN.getPath());
 	}
-	
+
 	public static boolean isDurabilityLossActive() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CLEANING_ITEM_DURABILITY.getPath());
 	}
@@ -135,10 +135,6 @@ public class PluginConfigManager {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.REFILL_CONSUMABLES, consumablesRefillActive);
 	}
 
-	public static boolean isUpdateCheckerActive() {
-		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.UPDATE_CHECKER_ACTIVE.getPath());
-	}
-
 	public static boolean isCooldownActive(CMRegistry.CMIdentifier id) {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath().concat(".").concat(id.toString()));
 	}
@@ -176,14 +172,6 @@ public class PluginConfigManager {
 		return null;
 	}
 
-	public static List<Category<?>> getAllCategories() {
-		List<Category<?>> list = new ArrayList<>();
-		list.addAll(getWordCategories());
-		list.addAll(getListCategories());
-		list.addAll(getMasterCategories());
-		return list;
-	}
-
 	public static List<WordCategory> getWordCategories() {
 		return getCastList(PluginConfig.getConfig().getList(
 				PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath(), new ArrayList<WordCategory>()));
@@ -216,17 +204,17 @@ public class PluginConfigManager {
 	}
 
 	public static boolean removeCategory(Categorizer categorizer) {
-		
+
 		String path = PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath();
 		String categoryName = categorizer.getName();
-		if(categorizer instanceof PredicateCategorizer){	
-			path = PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath();	
+		if(categorizer instanceof PredicateCategorizer){
+			path = PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath();
 		}else if(categorizer instanceof ListCategoryCategorizer) {
 			path = PluginConfig.ConfigPath.CATEGORIES_LISTS.getPath();
 		}else if(categorizer instanceof MasterCategorizer) {
 			path = PluginConfig.ConfigPath.CATEGORIES_MASTER.getPath();
 		}
-		
+
 		boolean removed = false;
 		List<Category<?>> list = (List<Category<?>>) PluginConfig.getConfig().getList(path);
 
@@ -239,11 +227,11 @@ public class PluginConfigManager {
 				break;
 			}
 		}
-		
+
 		PluginConfig.setIntoConfig(path, list);
 		return removed;
 	}
-	
+
 	private static <T extends Category> List<T> addOrUpdateCategory(T category, List<T> categories) {
 		T existingCategory = categories.stream()
 				.filter(cat -> cat.getName().equalsIgnoreCase(category.getName()))
@@ -272,7 +260,7 @@ public class PluginConfigManager {
 	public static void setDefaultAutoSort(boolean defaultAutoSort) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_AUTOSORT, defaultAutoSort);
 	}
-	
+
 	public static List<Material> getBlacklistInventory() {
 		if (blacklistInventory == null) {
 			blacklistInventory = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_INVENTORY);
@@ -296,7 +284,7 @@ public class PluginConfigManager {
 	    PluginConfigManager.blacklistStacking = blacklistStacking;
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_STACKING, getStringList(blacklistStacking));
 	}
-	
+
 	public static List<Material> getBlacklistAutoRefill() {
 	    if (blacklistAutorefill == null) {
 	    	blacklistAutorefill = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_AUTOREFILL);
@@ -308,7 +296,7 @@ public class PluginConfigManager {
 	    PluginConfigManager.blacklistAutorefill = blacklistAutorefill;
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_AUTOREFILL, getStringList(blacklistAutorefill));
 	}
-	
+
 	private static ArrayList<Material> getMaterialList(FileConfiguration config, PluginConfig.ConfigPath path) {
 		List<String> list = config.getStringList(path.getPath());
 		ArrayList<Material> materials = new ArrayList<>();

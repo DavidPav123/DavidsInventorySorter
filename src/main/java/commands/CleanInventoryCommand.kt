@@ -1,30 +1,25 @@
-package commands;
+package commands
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import commands.datastructures.CommandTree;
-import commands.datastructures.CommandTuple;
-import cooldown.CMRegistry;
-import utils.SortingUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-
-import sorting.InventorySorter;
-import utils.BlockDetector;
-import utils.InventoryDetector;
-import utils.PluginPermissions;
-import utils.messages.MessageSystem;
-import utils.messages.enums.MessageID;
-import utils.messages.enums.MessageType;
+import commands.datastructures.CommandTree
+import commands.datastructures.CommandTuple
+import cooldown.CMRegistry
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.World
+import org.bukkit.block.Block
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
+import org.bukkit.entity.Player
+import sorting.InventorySorter
+import utils.BlockDetector
+import utils.InventoryDetector
+import utils.PluginPermissions
+import utils.SortingUtils
+import utils.messages.MessageSystem
+import utils.messages.enums.MessageID
+import utils.messages.enums.MessageType
 
 /**
  * A command class representing the CleanInventory command. CleanInventory
@@ -33,101 +28,97 @@ import utils.messages.enums.MessageType;
  *
  * @author Tom2208
  */
-public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
+class CleanInventoryCommand : CommandExecutor, TabCompleter {
+    private val ownSubCommand = "own"
+    private val cmdTree: CommandTree = CommandTree(COMMAND_ALIAS)
 
-    private final String ownSubCommand = "own";
-    private final CommandTree cmdTree;
-
-    public static final String COMMAND_ALIAS = "cleaninventory";
-
-
-    public CleanInventoryCommand() {
-        cmdTree = new CommandTree(COMMAND_ALIAS);
-
-        cmdTree.addPath("/cleaninventory x", null, Integer.class);
-        cmdTree.addPath("/cleaninventory x y", null, Integer.class);
-        cmdTree.addPath("/cleaninventory x y z", this::sortInvAtLocation, Integer.class);
-        cmdTree.addPath("/cleaninventory x y z world", this::sortInvInWorld, String.class);
-
-        cmdTree.addPath("/cleaninventory", this::sortInvForPlayer);
-        cmdTree.addPath("/cleaninventory ".concat(ownSubCommand), this::sortPlayerInventory);
-        cmdTree.addPath("/cleaninventory player", this::sortPlayerInventory, Player.class);
-
+    init {
+        cmdTree.addPath("/cleaninventory x", null, Int::class.java)
+        cmdTree.addPath("/cleaninventory x y", null, Int::class.java)
+        cmdTree.addPath("/cleaninventory x y z", { tuple: CommandTuple -> sortInvAtLocation(tuple) }, Int::class.java)
+        cmdTree.addPath(
+            "/cleaninventory x y z world",
+            { tuple: CommandTuple -> sortInvInWorld(tuple) },
+            String::class.java
+        )
+        cmdTree.addPath("/cleaninventory") { tuple: CommandTuple -> sortInvForPlayer(tuple) }
+        cmdTree.addPath("/cleaninventory $ownSubCommand") { tuple: CommandTuple -> sortPlayerInventory(tuple) }
+        cmdTree.addPath(
+            "/cleaninventory player",
+            { tuple: CommandTuple -> sortPlayerInventory(tuple) },
+            Player::class.java
+        )
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
-        if (!sender.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())) {
-            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_INV_CLEAN);
-            return true;
+    override fun onCommand(sender: CommandSender, cmd: Command, label: String, args: Array<String>): Boolean {
+        if (!sender.hasPermission(PluginPermissions.CMD_INV_CLEAN.string)) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_INV_CLEAN)
+            return true
         }
-
-        cmdTree.execute(sender, cmd, label, args);
-        return true;
+        cmdTree.execute(sender, cmd, label, args)
+        return true
     }
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return cmdTree.getListForTabCompletion(args);
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<String>
+    ): List<String>? {
+        return cmdTree.getListForTabCompletion(args)
     }
 
     /**
-     * The player {@code player} sorts the inventory of the player with the name
-     * {@code playerName}. He needs the correct permissions.
+     * The player `player` sorts the inventory of the player with the name
+     * `playerName`. He needs the correct permissions.
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void sortPlayerInventory(CommandTuple tuple) {
-        Player player = getPlayer(tuple.sender);
-        if (player == null) return;
-        String playerName = tuple.args[0];
-        if (playerName.equalsIgnoreCase(ownSubCommand) || playerName.equalsIgnoreCase(player.getName())) {
-            if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OWN.getString())) {
-                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OWN);
+    private fun sortPlayerInventory(tuple: CommandTuple) {
+        val player = getPlayer(tuple.sender) ?: return
+        val playerName = tuple.args[0]
+        if (playerName.equals(ownSubCommand, ignoreCase = true) || playerName.equals(player.name, ignoreCase = true)) {
+            if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OWN.string)) {
+                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OWN)
             }
             if (InventorySorter.sortPlayerInventory(player)) {
-                MessageSystem.sendSortedMessage(player);
-                InventorySorter.playSortingSound(player);
+                InventorySorter.playSortingSound(player)
             }
         } else {
-            if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OTHERS.getString())) {
-                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OTHERS);
+            if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OTHERS.string)) {
+                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OTHERS)
             }
-
-            Player player2 = Bukkit.getPlayer(playerName);
-
+            val player2 = Bukkit.getPlayer(playerName)
             if (player2 == null) {
-                MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE, player);
+                MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE, player)
             } else {
-                if (InventorySorter.sortInventory(player2.getInventory(), player,
-                        InventoryDetector.getPlayerInventoryList(player2))) {
-                    MessageSystem.sendSortedMessage(player);
-                    MessageSystem.sendSortedMessage(player2);
-                    InventorySorter.playSortingSound(player);
-                    InventorySorter.playSortingSound(player2);
+                if (InventorySorter.sortInventory(
+                        player2.inventory, player,
+                        InventoryDetector.getPlayerInventoryList(player2)
+                    )
+                ) {
+                    InventorySorter.playSortingSound(player)
+                    InventorySorter.playSortingSound(player2)
                 }
             }
-
         }
     }
 
-    private Player getPlayer(CommandSender sender) {
-        if (sender instanceof Player) {
-            return (Player) sender;
-        }
-        return null;
+    private fun getPlayer(sender: CommandSender): Player? {
+        return if (sender is Player) {
+            sender
+        } else null
     }
 
     /**
-     * The player {@code p} sorts a blocks inventory.
+     * The player `p` sorts a blocks inventory.
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void sortInvForPlayer(CommandTuple tuple) {
-        Player p = getPlayer(tuple.sender);
-        Block block = BlockDetector.getTargetBlock(p);
-        sortBlock(block, p, p);
+    private fun sortInvForPlayer(tuple: CommandTuple) {
+        val p = getPlayer(tuple.sender)
+        val block = BlockDetector.getTargetBlock(p)
+        sortBlock(block, p, p)
     }
 
     /**
@@ -135,16 +126,14 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void sortInvInWorld(CommandTuple tuple) {
-
-        String worldStr = tuple.args[3];
-        CommandSender cs = tuple.sender;
-
-        World world = Bukkit.getWorld(worldStr);
+    private fun sortInvInWorld(tuple: CommandTuple) {
+        val worldStr = tuple.args[3]
+        val cs = tuple.sender
+        val world = Bukkit.getWorld(worldStr)
         if (world == null) {
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_WORLD_NAME, cs, worldStr);
+            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_WORLD_NAME, cs, worldStr)
         } else {
-            sortInvAtLocation(tuple);
+            sortInvAtLocation(tuple)
         }
     }
 
@@ -153,23 +142,22 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void sortInvAtLocation(CommandTuple tuple) {
-        String xStr = tuple.args[0];
-        String yStr = tuple.args[1];
-        String zStr = tuple.args[2];
-        CommandSender sender = tuple.sender;
-        Player player = getPlayer(sender);
-        World world;
-        if (tuple.args.length >= 4) {
-            world = Bukkit.getWorld(tuple.args[3]);
+    private fun sortInvAtLocation(tuple: CommandTuple) {
+        val xStr = tuple.args[0]
+        val yStr = tuple.args[1]
+        val zStr = tuple.args[2]
+        val sender = tuple.sender
+        val player = getPlayer(sender)
+        val world: World? = if (tuple.args.size >= 4) {
+            Bukkit.getWorld(tuple.args[3])
         } else {
-            world = player.getWorld();
+            player!!.world
         }
-        int x = (int) Double.parseDouble(xStr);
-        int y = (int) Double.parseDouble(yStr);
-        int z = (int) Double.parseDouble(zStr);
-        Block block = BlockDetector.getBlockByLocation(new Location(world, x, y, z));
-        sortBlock(block, player, sender);
+        val x = xStr.toDouble().toInt()
+        val y = yStr.toDouble().toInt()
+        val z = zStr.toDouble().toInt()
+        val block = BlockDetector.getBlockByLocation(Location(world, x.toDouble(), y.toDouble(), z.toDouble()))
+        sortBlock(block, player, sender)
     }
 
     /**
@@ -179,17 +167,22 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
      * @param p      the player who is sorting.
      * @param sender the sender which executed the command.
      */
-    private void sortBlock(Block block, Player p, CommandSender sender) {
+    private fun sortBlock(block: Block, p: Player?, sender: CommandSender?) {
         if (!SortingUtils.isOnInventoryBlacklist(block, sender)) {
-            if (!CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, p)) {
+            if (!p?.let { CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, it) }!!) {
                 if (InventorySorter.sortPlayerBlock(block, p)) {
-                    MessageSystem.sendSortedMessage(sender);
                 } else {
-                    MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLOCK_NO_INVENTORY, sender,
-                            "(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", " + block.getType().name()
-                                    + ")");
+                    MessageSystem.sendMessageToCSWithReplacement(
+                        MessageType.ERROR, MessageID.ERROR_BLOCK_NO_INVENTORY, sender,
+                        "(" + block.x + " / " + block.y + " / " + block.z + ", " + block.type.name
+                                + ")"
+                    )
                 }
             }
         }
+    }
+
+    companion object {
+        const val COMMAND_ALIAS = "cleaninventory"
     }
 }

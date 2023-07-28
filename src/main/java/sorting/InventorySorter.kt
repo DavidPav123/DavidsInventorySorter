@@ -1,173 +1,155 @@
-package sorting;
+package sorting
 
-import java.util.ArrayList;
-import java.util.List;
+import config.PlayerDataManager.containsSortingSound
+import config.PlayerDataManager.getCategoryOrder
+import config.PlayerDataManager.getSortingPattern
+import config.PlayerDataManager.isSortingSound
+import config.PluginConfigManager
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.block.Block
+import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
+import utils.InventoryConverter
+import utils.InventoryDetector.getInventoryFormBlock
+import utils.InventoryDetector.getPlayerInventoryList
+import utils.PluginPermissions
+import utils.messages.MessageSystem
+import utils.messages.enums.MessageID
+import utils.messages.enums.MessageType
 
-import config.PlayerDataManager;
-import config.PluginConfigManager;
-import utils.PluginPermissions;
-import utils.messages.MessageSystem;
-import utils.messages.enums.MessageID;
-import utils.messages.enums.MessageType;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+object InventorySorter {
+    /**
+     * Returns `list` sorted in full stacked items.
+     * The amount of the ItemStack is increased beyond MaxStackSize, but only one ItemStack exists for each Material.
+     * Items on the stacking blacklist don't get their amount increased. They are simply added to the list.
+     * So there may be multiple ItemStacks for materials on the stacking blacklist.
+     *
+     * @param items an ArrayList of ItemStacks you want to sort
+     * @return full stacked `list`;
+     */
+    private fun reduceStacks(items: List<ItemStack?>): List<ItemStack?> {
+        // temp list, every item once, amounts get added
+        val newList = ArrayList<ItemStack?>()
+        for (item in items) {
+            if (PluginConfigManager.getBlacklistStacking().contains(item!!.type)) {
+                newList.add(item)
+            } else {
+                val existingItem = newList.stream()
+                    .filter { tempItem: ItemStack? -> tempItem!!.isSimilar(item) }
+                    .findFirst().orElse(null)
+                if (existingItem == null) {
+                    newList.add(item)
+                } else {
+                    existingItem.amount = existingItem.amount + item.amount
+                }
+            }
+        }
+        return newList
+    }
 
-import utils.InventoryConverter;
-import utils.InventoryDetector;
+    /**
+     * Returns `list` sorted in maxStackSize ItemStacks.
+     * If the amount is larger than maxStackSize, it will create a new ItemStack for that material.
+     * Items on the stacking blacklist are simply added to the list.
+     */
+    private fun expandStacks(items: List<ItemStack?>): List<ItemStack?> {
+        val newList = ArrayList<ItemStack?>()
+        for (item in items) {
+            if (PluginConfigManager.getBlacklistStacking().contains(item!!.type)) {
+                newList.add(item)
+            } else if (item.type != Material.AIR) {
+                while (item.amount > 0) {
+                    val amount = item.amount.coerceAtMost(item.maxStackSize)
+                    val clone = item.clone()
+                    clone.amount = amount
+                    newList.add(clone)
+                    item.amount = item.amount - amount
+                }
+            }
+        }
+        return newList
+    }
 
-public class InventorySorter {
+    fun sortPlayerInventory(p: Player): Boolean {
+        return sortInventory(p.inventory, p, getPlayerInventoryList(p))
+    }
 
-	/**
-	 * Returns {@code list} sorted in full stacked items.
-	 * The amount of the ItemStack is increased beyond MaxStackSize, but only one ItemStack exists for each Material.
-	 * Items on the stacking blacklist dont get their ammount increased. They are simply added to the list.
-	 * So there may be multiple ItemStacks for materials on the stacking blacklist.
-	 * 
-	 * @param items an ArrayList of ItemStacks you want to sort
-	 * @return full stacked {@code list};
-	 */
-	private static List<ItemStack> reduceStacks(List<ItemStack> items) {
-		// temp list, every item once, amounts get added
-		ArrayList<ItemStack> newList = new ArrayList<>();
+    /**
+     * Sorts any kind of inventory.
+     *
+     * @param inv the inventory you want to sort.
+     */
+    @JvmOverloads
+    fun sortInventory(
+        inv: Inventory?,
+        p: Player?,
+        items: List<ItemStack?> = InventoryConverter.getArrayListFromInventory(inv)
+    ): Boolean {
+        var items = items
+        val event = SortingEvent(p!!, inv!!, items)
+        Bukkit.getPluginManager().callEvent(event)
+        if (event.isCancelled) {
+            return false
+        }
+        var categoryNames = PluginConfigManager.getCategoryOrder()
+        var pattern = PluginConfigManager.getDefaultPattern()
+        if (items.isEmpty()) {
+            return false
+        }
+        if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.string)) {
+            categoryNames = getCategoryOrder(p)
+        }
+        if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.string)) {
+            pattern = getSortingPattern(p)
+        }
+        if (!CategorizerManager.validateExists(categoryNames)) {
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_INVALID, p)
+            return false
+        }
+        if (items.size <= 1) {
+            InventoryConverter.setItemsOfInventory(inv, items, pattern)
+            return true
+        }
+        items = reduceStacks(items)
+        items = CategorizerManager.sort(items, categoryNames)
+        items = expandStacks(items)
+        InventoryConverter.setItemsOfInventory(inv, items, pattern)
+        return true
+    }
 
-		for (ItemStack item : items) {
-			if (PluginConfigManager.getBlacklistStacking().contains(item.getType())) {
-				newList.add(item);
-			} else {
-				ItemStack existingItem = newList.stream()
-						.filter(tempItem -> tempItem.isSimilar(item))
-						.findFirst().orElse(null);
+    /**
+     * Checks if the block has an inventory or if it is an enderchest and sorts it.
+     *
+     * @param b Block you want to get sorted.
+     * @param p the player or owner of an enderchest inventory.
+     * @return returns true if an inventory got sorted, otherwise false.
+     */
+    fun sortPlayerBlock(b: Block, p: Player?): Boolean {
+        val inv = getInventoryFormBlock(b)
+        if (inv != null) {
+            return sortInventory(inv, p)
+        }
+        if (p != null) {
+            if (b.blockData.material == Material.ENDER_CHEST) {
+                return sortInventory(p.enderChest, p)
+            }
+        }
+        return false
+    }
 
-				if (existingItem == null) {
-					newList.add(item);
-				} else {
-					existingItem.setAmount(existingItem.getAmount() + item.getAmount());
-				}
-			}
-		}
-		return newList;
-	}
-
-	/**
-	 * Returns {@code list} sorted in maxStackSize ItemStacks.
-	 * If the amount is larger than maxStackSize, it will create a new ItemStack for that material.
-	 * Items on the stacking blacklist are simply added to the list.
-	 */
-	private static List<ItemStack> expandStacks(List<ItemStack> items) {
-		ArrayList<ItemStack> newList = new ArrayList<>();
-
-		for (ItemStack item : items) {
-			if (PluginConfigManager.getBlacklistStacking().contains(item.getType())) {
-				newList.add(item);
-			} else if (!item.getType().equals(Material.AIR)){
-				while (item.getAmount() > 0) {
-					int amount = Math.min(item.getAmount(), item.getMaxStackSize());
-					ItemStack clone = item.clone();
-					clone.setAmount(amount);
-					newList.add(clone);
-					item.setAmount(item.getAmount() - amount);
-				}
-			}
-		}
-		return newList;
-	}
-
-	public static boolean sortPlayerInventory(Player p) {
-		return sortInventory(p.getInventory(), p, InventoryDetector.getPlayerInventoryList(p));
-	}
-
-	public static boolean sortInventory(Inventory inv, Player p) {
-		return sortInventory(inv, p, InventoryConverter.getArrayListFromInventory(inv));
-	}
-
-	/**
-	 * Sorts any kind of inventory.
-	 * 
-	 * @param inv the inventory you want to sort.
-	 */
-	public static boolean sortInventory(Inventory inv, Player p, List<ItemStack> items) {
-
-		SortingEvent event = new SortingEvent(p, inv, items);
-		Bukkit.getPluginManager().callEvent(event);
-		if(event.isCancelled()){
-			return false;
-		}
-
-		List<String> categoryNames = PluginConfigManager.getCategoryOrder();
-		SortingPattern pattern = PluginConfigManager.getDefaultPattern();
-
-		if(items == null || items.isEmpty()) {
-			return false;
-		}
-
-		if(p != null) {
-			if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.getString())) {
-				categoryNames = PlayerDataManager.getCategoryOrder(p);
-			}
-			if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
-				pattern = PlayerDataManager.getSortingPattern(p);
-			}
-		}
-
-		if (!CategorizerManager.validateExists(categoryNames)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_INVALID, p);
-			return false;
-		}
-
-		if (items.size() <= 1) {
-			InventoryConverter.setItemsOfInventory(inv, items, pattern);
-			return true;
-		}
-
-		items = reduceStacks(items);
-		items = CategorizerManager.sort(items, categoryNames);
-		items = expandStacks(items);
-
-		InventoryConverter.setItemsOfInventory(inv, items, pattern);
-		return true;
-	}
-
-	/**
-	 * Checks if the block has an inventory or if it is an enderchest and sorts it.
-	 * 
-	 * @param b Block you want to get sorted.
-	 * @param p the player or owner of an enderchest inventory.
-	 * @return returns true if an inventory got sorted, otherwise false.
-	 */
-	public static boolean sortPlayerBlock(Block b, Player p) {
-
-		Inventory inv = InventoryDetector.getInventoryFormBlock(b);
-
-		if (inv != null) {
-			return sortInventory(inv, p);
-		}
-
-		if (p != null && b != null) {
-			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
-				return sortInventory(p.getEnderChest(), p);
-			}
-		}
-
-		return false;
-	}
-
-	public static void playSortingSound(Player p) {
-		boolean flag;
-		if(PlayerDataManager.containsSortingSound(p)) {
-			flag = PlayerDataManager.isSortingSound(p);
-		}else {
-			flag = PluginConfigManager.getDefaultSortingSoundBoolean();
-		}
-		
-		if(flag) {
-			p.getWorld().playSound(p.getLocation(), PluginConfigManager.getDefaultSortingSound(),
-					PluginConfigManager.getDefaultVolume(), PluginConfigManager.getDefaultPitch());
-		}
-	}
-
+    fun playSortingSound(p: Player) {
+        val flag: Boolean = if (containsSortingSound(p)) {
+            isSortingSound(p)
+        } else {
+            PluginConfigManager.getDefaultSortingSoundBoolean()
+        }
+        if (flag) {
+            p.world.playSound(
+                p.location, PluginConfigManager.getDefaultSortingSound(),
+                PluginConfigManager.getDefaultVolume(), PluginConfigManager.getDefaultPitch()
+            )
+        }
+    }
 }

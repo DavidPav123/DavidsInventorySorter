@@ -1,18 +1,15 @@
-package utils;
+package utils
 
-import org.bukkit.Sound;
+import org.bukkit.Sound
+import java.util.*
+import java.util.stream.Collectors
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class SortingAdminUtils {
-
-    public static Sound getSoundByName(String name){
-        List<Sound> soundList = Arrays.stream(Sound.values()).
-                filter(s -> s.toString().equalsIgnoreCase(name)).collect(Collectors.toList());
-        if(soundList.size() > 0) return soundList.get(0);
-        return null;
+object SortingAdminUtils {
+    @JvmStatic
+    fun getSoundByName(name: String?): Sound? {
+        val soundList = Arrays.stream(Sound.entries.toTypedArray())
+            .filter { s: Sound -> s.toString().equals(name, ignoreCase = true) }
+            .collect(Collectors.toList())
+        return if (soundList.size > 0) soundList[0] else null
     }
-
 }

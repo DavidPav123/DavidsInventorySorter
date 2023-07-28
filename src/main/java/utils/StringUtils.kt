@@ -1,78 +1,78 @@
-package utils;
+package utils
 
-import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.Material
+import org.bukkit.command.CommandSender
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BookMeta
+import utils.messages.MessageSystem
+import utils.messages.enums.MessageID
+import utils.messages.enums.MessageType
+import kotlin.math.ceil
 
-import utils.messages.MessageSystem;
-import utils.messages.enums.MessageID;
-import utils.messages.enums.MessageType;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class StringUtils {
-
-	public static boolean isStringBoolean(CommandSender sender, String bool) {
-		if (StringUtils.isStringNotTrueOrFalse(bool)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
-			return false;
-		}
-		return true;
-	}
-    
-    public static boolean isStringNotTrueOrFalse(String str) {
-        return !str.equalsIgnoreCase(Boolean.TRUE.toString()) && !str.equalsIgnoreCase(Boolean.FALSE.toString());
+object StringUtils {
+    @JvmStatic
+    fun isStringBoolean(sender: CommandSender?, bool: String): Boolean {
+        if (isStringNotTrueOrFalse(bool)) {
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender)
+            return false
+        }
+        return true
     }
 
-    public static ItemStack getAsBook(String string) {
-        ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
-        BookMeta bm = (BookMeta) book.getItemMeta();
-        assert bm != null;
-        bm.setPages(separateIntoPages(string));
-        book.setItemMeta(bm);
-        return book;
+    @JvmStatic
+    fun isStringNotTrueOrFalse(str: String): Boolean {
+        return !str.equals(
+            java.lang.Boolean.TRUE.toString(),
+            ignoreCase = true
+        ) && !str.equals(java.lang.Boolean.FALSE.toString(), ignoreCase = true)
     }
 
-    public static List<String> separateIntoPages(String string) {
-        List<String> pages = new ArrayList<>();
-        String curPage = "";
-        int maxLines = 14;
-        int curPageLines = 0;
+    @JvmStatic
+    fun getAsBook(string: String): ItemStack {
+        val book = ItemStack(Material.WRITABLE_BOOK)
+        val bm = (book.itemMeta as BookMeta)
+        bm.pages = separateIntoPages(string)
+        book.setItemMeta(bm)
+        return book
+    }
+
+    private fun separateIntoPages(string: String): List<String> {
+        val pages: MutableList<String> = ArrayList()
+        var curPage = ""
+        val maxLines = 14
+        var curPageLines = 0
         // pages
-        for (String line : string.split("\n")) {
-            int lineCount = countLinesNeeded(line);
+        for (line in string.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+            val lineCount = countLinesNeeded(line)
             if (curPageLines + lineCount <= maxLines) {
-                curPageLines += lineCount;
-                curPage = curPage.concat(line).concat("\n");
+                curPageLines += lineCount
+                curPage = curPage + line + "\n"
             } else {
-                pages.add(curPage);
-                curPage = line.concat("\n");
-                curPageLines = lineCount;
+                pages.add(curPage)
+                curPage = line + "\n"
+                curPageLines = lineCount
             }
         }
-        pages.add(curPage);
-        return pages;
+        pages.add(curPage)
+        return pages
     }
 
-    private static int countLinesNeeded(String string) {
-        double maxCharsPerLine = 19;
-        int countLines = 1;
-        int curLineChars = 0;
-
-        for (String part : string.split(" ")) {
-            if (part.length() + curLineChars < maxCharsPerLine) {
-                curLineChars += part.length() + 1; // +1 for the space that belongs between the parts
-            } else if (part.length() <= maxCharsPerLine) {
-                countLines++;
-                curLineChars = part.length();
+    private fun countLinesNeeded(string: String): Int {
+        val maxCharsPerLine = 19.0
+        var countLines = 1
+        var curLineChars = 0
+        for (part in string.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+            if (part.length + curLineChars < maxCharsPerLine) {
+                curLineChars += part.length + 1 // +1 for the space that belongs between the parts
+            } else if (part.length <= maxCharsPerLine) {
+                countLines++
+                curLineChars = part.length
             } else {
-                double lineRatio = part.length() / maxCharsPerLine;
-                countLines += Math.ceil(lineRatio);
-                curLineChars = (int) (part.length() - ((int)lineRatio * maxCharsPerLine));
+                val lineRatio = part.length / maxCharsPerLine
+                countLines = (countLines + ceil(lineRatio)).toInt()
+                curLineChars = (part.length - lineRatio.toInt() * maxCharsPerLine).toInt()
             }
         }
-        return countLines;
+        return countLines
     }
 }

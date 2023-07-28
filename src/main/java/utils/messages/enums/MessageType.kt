@@ -1,5 +1,9 @@
-package utils.messages.enums;
+package utils.messages.enums
 
-public enum MessageType {
-	SYNTAX_ERROR, ERROR, SUCCESS, MISSING_PERMISSION, UNHEADED_INFORMATION;
+enum class MessageType {
+    SYNTAX_ERROR,
+    ERROR,
+    SUCCESS,
+    MISSING_PERMISSION,
+    UNHEADED_INFORMATION
 }

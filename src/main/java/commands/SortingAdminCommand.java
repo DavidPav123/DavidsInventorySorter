@@ -5,6 +5,7 @@ import commands.datastructures.CommandTuple;
 import config.PluginConfigManager;
 import config.serializable.Category;
 import cooldown.CMRegistry;
+import org.jetbrains.annotations.NotNull;
 import sorting.SortingPattern;
 import sorting.CategorizerManager;
 import sorting.categorizer.Categorizer;
@@ -28,30 +29,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * A command class representing the SortingConfig command. SortingConfig Command
- * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-sortingconfig
  */
 public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
-    /**
-     * sortingAdmin(autosort,categories,cooldown,pattern,chatNotification,sortingSound,refill,clickSort)
-     * categories(set(), activate, addFromBook, getAsBook, remove())
-     */
-    //TODO Autofill categories etc
-    /* sub-commands */
-    private final String autosortSubCommand = "autosort";
-    private final String categoriesSubCommand = "categories";
-    private final String cooldownSubCommand = "cooldown";
-    private final String patternSubCommand = "pattern";
-    private final String chatNotificationSubCommand = "chatNotification";
-    private final String sortingSoundSubCommand = "sortingSound";
-    private final String clickSortSubCommand = "clickSort";
-
-    /* categories sub-commands */
-    private final String activeSubCommand = "active";
     private final String autosortProperty = "default autosort";
     private final String categoriesProperty = "default categoryOrder";
     private final String cooldownProperty = "cooldown (in ms)";
@@ -102,13 +85,13 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         cmdTree.execute(sender, cmd, label, args);
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender cs, @NotNull Command cmd, @NotNull String label, String[] args) {
         return cmdTree.getListForTabCompletion(args);
     }
 
@@ -148,6 +131,13 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         String key = "";
         String value = "";
 
+        String clickSortSubCommand = "clickSort";
+        String sortingSoundSubCommand = "sortingSound";
+        String chatNotificationSubCommand = "chatNotification";
+        String patternSubCommand = "pattern";
+        String cooldownSubCommand = "cooldown";
+        String categoriesSubCommand = "categories";
+        String autosortSubCommand = "autosort";
         if (command.equalsIgnoreCase(autosortSubCommand)) {
             key = autosortProperty;
             value = String.valueOf(PluginConfigManager.getDefaultAutoSortBoolean());
@@ -157,17 +147,19 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
             value = PluginConfigManager.getCategoryOrder().toString();
 
         } else if (command.equalsIgnoreCase(cooldownSubCommand)) {
+            /* categories sub-commands */
+            String activeSubCommand = "active";
             if (tuple.args.length >= 3 && tuple.args[2].equalsIgnoreCase(activeSubCommand)) {
                 key = activeProperty;
                 List<CMRegistry.CMIdentifier> dmi = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
-                        (c -> tuple.args[1].equalsIgnoreCase(c.toString())).collect(Collectors.toList());
+                        (c -> tuple.args[1].equalsIgnoreCase(c.toString())).toList();
                 if(dmi.size() >= 1){
                     value = String.valueOf(PluginConfigManager.isCooldownActive(dmi.get(0)));
                 }
             } else {
                 key = cooldownProperty;
                 List<CMRegistry.CMIdentifier> dmi = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
-                        (c -> tuple.args[1].equalsIgnoreCase(c.toString())).collect(Collectors.toList());
+                        (c -> tuple.args[1].equalsIgnoreCase(c.toString())).toList();
                 if(dmi.size() >= 1){
                     value = String.valueOf(PluginConfigManager.getCooldown(dmi.get(0)));
                 }
@@ -406,7 +398,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
     private CMRegistry.CMIdentifier getIDByString(String str){
         return Arrays.stream(CMRegistry.CMIdentifier.values()).
-                filter(i -> i.toString().equalsIgnoreCase(str)).collect(Collectors.toList()).get(0);
+                filter(i -> i.toString().equalsIgnoreCase(str)).toList().get(0);
     }
 
     public enum RefillType {

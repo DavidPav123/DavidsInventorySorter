@@ -1,67 +1,64 @@
-package listeners;
+package listeners
 
-import cooldown.CMRegistry;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import config.PlayerDataManager;
-import config.PluginConfigManager;
-import sorting.InventorySorter;
-import utils.BlockDetector;
-import utils.InventoryDetector;
-import utils.PluginPermissions;
-import utils.SortingUtils;
-import utils.messages.MessageSystem;
+import config.PlayerDataManager.isAutoSort
+import config.PlayerDataManager.isClickSort
+import config.PluginConfigManager
+import cooldown.CMRegistry
+import cooldown.CMRegistry.Companion.isOnCooldown
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
+import org.bukkit.event.inventory.*
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.Damageable
+import sorting.InventorySorter
+import utils.BlockDetector
+import utils.InventoryDetector
+import utils.PluginPermissions
+import utils.SortingUtils
+import utils.messages.MessageSystem
 
 /**
  * @author Tom2208
  */
-public class SortingListener implements org.bukkit.event.Listener {
-
-    private String[] usableAnimalInventories = {"CraftMule", "CraftLlama", "CraftHorse"};
-    private InventoryType[] invTypeWhiteList = {InventoryType.CHEST, InventoryType.ENDER_CHEST, InventoryType.BARREL, InventoryType.SHULKER_BOX, InventoryType.PLAYER, InventoryType.CREATIVE,
-            InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.HOPPER};
+class SortingListener : Listener {
+    private val usableAnimalInventories = arrayOf("CraftMule", "CraftLlama", "CraftHorse")
+    private val invTypeWhiteList = arrayOf(
+        InventoryType.CHEST,
+        InventoryType.ENDER_CHEST,
+        InventoryType.BARREL,
+        InventoryType.SHULKER_BOX,
+        InventoryType.PLAYER,
+        InventoryType.CREATIVE,
+        InventoryType.DISPENSER,
+        InventoryType.DROPPER,
+        InventoryType.HOPPER
+    )
 
     @EventHandler
-    private void onRightClick(PlayerInteractEvent e) {
-
-        Player player = e.getPlayer();
-
-        if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+    private fun onRightClick(e: PlayerInteractEvent) {
+        val player = e.player
+        if (e.action == Action.RIGHT_CLICK_AIR || e.action == Action.RIGHT_CLICK_BLOCK) {
             if (PluginConfigManager.isCleaningItemActive() && isPlayerHoldingACleaningItem(player)) {
-
                 if (isPlayerAllowedToCleanOwnInv(player) && SortingUtils.sortPlayerInvWithEffects(player)) {
-                    damageItem(player);
-                    e.setCancelled(true);
-
+                    damageItem(player)
+                    e.isCancelled = true
                 } else if (!PluginConfigManager.isOpenEvent()
-                        && !CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, player)
-                        && player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
-
-                    Block b = BlockDetector.getTargetBlock(player);
-
-                    if ((!InventoryDetector.hasInventoryHolder(b))
-                            || PluginConfigManager.getBlacklistInventory().contains(b.getType()))
-                    return;
-
+                    && !isOnCooldown(CMRegistry.CMIdentifier.SORTING, player)
+                    && player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.string)
+                ) {
+                    val b = BlockDetector.getTargetBlock(player)
+                    if (!InventoryDetector.hasInventoryHolder(b)
+                        || PluginConfigManager.getBlacklistInventory().contains(b.type)
+                    ) return
                     if (InventorySorter.sortPlayerBlock(b, player)) {
-                        damageItem(player);
-                        InventorySorter.playSortingSound(player);
-                        MessageSystem.sendSortedMessage(player);
-                        e.setCancelled(true);
+                        damageItem(player)
+                        InventorySorter.playSortingSound(player)
+                        e.isCancelled = true
                     }
                 }
             }
@@ -69,151 +66,130 @@ public class SortingListener implements org.bukkit.event.Listener {
     }
 
     @EventHandler
-    private void onOpenInventory(InventoryOpenEvent e) {
-
+    private fun onOpenInventory(e: InventoryOpenEvent) {
         if (PluginConfigManager.isCleaningItemActive() && PluginConfigManager.isOpenEvent()) {
-
-            Player player = (Player) e.getPlayer();
-
-            if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())
-                    && isPlayerHoldingACleaningItem(player) && SortingUtils.sortInventoryWithEffects(e.getInventory(), player)) {
-                damageItem(player);
-                e.setCancelled(true);
+            val player = e.player as Player
+            if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.string)
+                && isPlayerHoldingACleaningItem(player) && SortingUtils.sortInventoryWithEffects(e.inventory, player)
+            ) {
+                damageItem(player)
+                e.isCancelled = true
             }
         }
     }
 
     @EventHandler
-    private void onCloseInventory(InventoryCloseEvent e) {
+    private fun onCloseInventory(e: InventoryCloseEvent) {
         // Doing the auto sorting here
-        if (e.getInventory().getType().equals(InventoryType.ENDER_CHEST)
-                || e.getInventory().getType().equals(InventoryType.CHEST)) {
-
-            Player player = (Player) e.getPlayer();
-
-            if (PlayerDataManager.isAutoSort(player)) {
-                SortingUtils.sortInventoryWithEffects(e.getInventory(), player);
+        if (e.inventory.type == InventoryType.ENDER_CHEST || e.inventory.type == InventoryType.CHEST) {
+            val player = e.player as Player
+            if (isAutoSort(player)) {
+                SortingUtils.sortInventoryWithEffects(e.inventory, player)
             }
         }
     }
 
     @EventHandler
-    private void onClick(InventoryClickEvent e) {
-        if (e.getClick().equals(ClickType.MIDDLE) || isNewClick(e)) {
-            if (e.getWhoClicked().hasPermission(PluginPermissions.CLICK_SORT.getString())) {
-                if (e.getSlot() == -999) {
-                    if (e.getCurrentItem() == null) {
-                        Player player = Bukkit.getServer().getPlayer(e.getWhoClicked().getName());
-                        if (PlayerDataManager.isClickSort(player)) {
-                            sortInventoryOnClick(player, e);
+    private fun onClick(e: InventoryClickEvent) {
+        if (e.click == ClickType.MIDDLE || isNewClick(e)) {
+            if (e.whoClicked.hasPermission(PluginPermissions.CLICK_SORT.string)) {
+                if (e.slot == -999) {
+                    if (e.currentItem == null) {
+                        val player = Bukkit.getServer().getPlayer(e.whoClicked.name)
+                        if (isClickSort(player)) {
+                            sortInventoryOnClick(player, e)
                         }
-                        e.setCancelled(true);
+                        e.isCancelled = true
                     }
                 }
             }
         }
     }
 
-    private boolean isNewClick(InventoryClickEvent e){
-        return e.getClick().equals(ClickType.RIGHT) && e.getCurrentItem() == null;
+    private fun isNewClick(e: InventoryClickEvent): Boolean {
+        return e.click == ClickType.RIGHT && e.currentItem == null
     }
 
-    private void sortInventoryOnClick(Player player, InventoryClickEvent e) {
-
-        boolean flag = false;
-        for (InventoryType type : invTypeWhiteList) {
-            if (e.getInventory().getType().equals(type)) {
-                flag = true;
-                break;
+    private fun sortInventoryOnClick(player: Player?, e: InventoryClickEvent) {
+        var flag = false
+        for (type in invTypeWhiteList) {
+            if (e.inventory.type == type) {
+                flag = true
+                break
             }
         }
-
-        boolean animalInv = false;
-
-        if (e.getInventory().getType().equals(InventoryType.CHEST)) {
-            for (String holder : usableAnimalInventories) {
-                if (e.getInventory().getHolder() != null && e.getInventory().getHolder().toString().contains(holder)) {
-                    animalInv = true;
-                    break;
+        var animalInv = false
+        if (e.inventory.type == InventoryType.CHEST) {
+            for (holder in usableAnimalInventories) {
+                if (e.inventory.holder != null && e.inventory.holder.toString().contains(holder)) {
+                    animalInv = true
+                    break
                 }
             }
         }
         if (!flag || animalInv) {
-            SortingUtils.sortPlayerInvWithEffects(player);
+            SortingUtils.sortPlayerInvWithEffects(player)
         } else {
-            SortingUtils.sortInventoryWithEffects(e.getInventory(), player);
+            SortingUtils.sortInventoryWithEffects(e.inventory, player)
         }
-
     }
 
-    private boolean isPlayerHoldingACleaningItem(Player player) {
-        return isPlayerHoldingCleaningItemInMainHand(player) || isPlayerHoldingCleaningItemInOffHand(player);
+    private fun isPlayerHoldingACleaningItem(player: Player): Boolean {
+        return isPlayerHoldingCleaningItemInMainHand(player) || isPlayerHoldingCleaningItemInOffHand(player)
     }
 
-    private ItemStack getComparableItem(ItemStack item) {
-        ItemStack compItem = item.clone();
-        ItemMeta itemMeta = compItem.getItemMeta();
-        Damageable damageable = ((Damageable) itemMeta);
-        if (damageable != null) {
-            damageable.setDamage(0);
-            compItem.setItemMeta(itemMeta);
-        }
-        return compItem;
+    private fun getComparableItem(item: ItemStack): ItemStack {
+        val compItem = item.clone()
+        val itemMeta = compItem.itemMeta
+        val damageable = itemMeta as Damageable
+        damageable.damage = 0
+        compItem.setItemMeta(itemMeta)
+        return compItem
     }
 
-    private boolean isPlayerHoldingCleaningItemInMainHand(Player player) {
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType().equals(Material.AIR)) {
-            return false;
-        }
-        return getComparableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
+    private fun isPlayerHoldingCleaningItemInMainHand(player: Player): Boolean {
+        val item = player.inventory.itemInMainHand
+        return if (item.type == Material.AIR) {
+            false
+        } else getComparableItem(item).isSimilar(PluginConfigManager.getCleaningItem())
     }
 
-    private boolean isPlayerHoldingCleaningItemInOffHand(Player player) {
-        ItemStack item = player.getInventory().getItemInOffHand();
-        if (item.getType().equals(Material.AIR)) {
-            return false;
-        }
-        return getComparableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
+    private fun isPlayerHoldingCleaningItemInOffHand(player: Player): Boolean {
+        val item = player.inventory.itemInOffHand
+        return if (item.type == Material.AIR) {
+            false
+        } else getComparableItem(item).isSimilar(PluginConfigManager.getCleaningItem())
     }
 
-    private boolean isPlayerAllowedToCleanOwnInv(Player player) {
-        return player.hasPermission(PluginPermissions.CLEANING_ITEM_USE_OWN_INV.getString()) && player.isSneaking();
+    private fun isPlayerAllowedToCleanOwnInv(player: Player): Boolean {
+        return player.hasPermission(PluginPermissions.CLEANING_ITEM_USE_OWN_INV.string) && player.isSneaking
     }
 
     /**
-     * Damages the item in the Hand of the {@code player} (using
-     * player.getItemInHand()), if the {@code durability} (in class Main) is true.
+     * Damages the item in the Hand of the `player` (using
+     * player.getItemInHand()), if the `durability` (in class Main) is true.
      * Damaging means, that stackable items (maxStackSize > 1) get reduced in amount
      * by one, not stackable items get damaged and removed, if they reach the
      * highest durability .
      *
      * @param player the player who is holding the item, that you want to get
-     *               damaged, in hand.
+     * damaged, in hand.
      */
-    private void damageItem(Player player) {
-
+    private fun damageItem(player: Player) {
         if (PluginConfigManager.isDurabilityLossActive()) {
-
-            ItemStack item;
-            if (isPlayerHoldingCleaningItemInMainHand(player)) {
-                item = player.getInventory().getItemInMainHand();
+            val item: ItemStack = if (isPlayerHoldingCleaningItemInMainHand(player)) {
+                player.inventory.itemInMainHand
             } else {
-                item = player.getInventory().getItemInOffHand();
+                player.inventory.itemInOffHand
             }
-
-            ItemMeta itemMeta = item.getItemMeta();
-            Damageable damageable = ((Damageable) itemMeta);
-            if (damageable != null) {
-                if (!(damageable.getDamage() + 1 >= item.getType().getMaxDurability())) {
-                    damageable.setDamage(damageable.getDamage() + 1);
-                } else {
-                    item.setAmount(item.getAmount() - 1);
-                }
-                item.setItemMeta(itemMeta);
+            val itemMeta = item.itemMeta
+            val damageable = itemMeta as Damageable
+            if (damageable.damage + 1 < item.type.maxDurability) {
+                damageable.damage = damageable.damage + 1
+            } else {
+                item.amount = item.amount - 1
             }
+            item.setItemMeta(itemMeta)
         }
-
     }
-
 }

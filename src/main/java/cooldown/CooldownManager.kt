@@ -1,7 +1,5 @@
-package cooldown;
+package cooldown
 
-public interface CooldownManager {
-
-	boolean isOnCooldown(Object obj);
-
+interface CooldownManager {
+    fun isOnCooldown(obj: Any?): Boolean
 }

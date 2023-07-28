@@ -10,7 +10,7 @@ import java.util.Map;
 @SerializableAs("WordCategory")
 public class WordCategory implements Category<String> {
 
-    private String name;
+    private final String name;
     private String word;
 
     private static final String nameKey = "name";
@@ -30,7 +30,7 @@ public class WordCategory implements Category<String> {
     }
 
     public void setValue(String value) {
-         this.word = value;
+        this.word = value;
     }
 
     @Override

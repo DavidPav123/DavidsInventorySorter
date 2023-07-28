@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 
 public class CategorizerManager {
 
-	private static List<Categorizer> availableCategorizers = new ArrayList<>();
+	private static final List<Categorizer> availableCategorizers = new ArrayList<>();
 
 	public static List<ItemStack> sort(List<ItemStack> items, List<String> categorizerNames) {
 
 		List<Categorizer> categorizers = categorizerNames.stream().map(CategorizerManager::getByName)
-				.collect(Collectors.toList());
+				.toList();
 
 		List<List<ItemStack>> categories = new ArrayList<>();
 		categories.add(items);
