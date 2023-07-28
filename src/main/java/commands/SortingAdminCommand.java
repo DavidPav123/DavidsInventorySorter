@@ -5,16 +5,6 @@ import commands.datastructures.CommandTuple;
 import config.PluginConfigManager;
 import config.serializable.Category;
 import cooldown.CMRegistry;
-import org.jetbrains.annotations.NotNull;
-import sorting.SortingPattern;
-import sorting.CategorizerManager;
-import sorting.categorizer.Categorizer;
-import utils.SortingAdminUtils;
-import utils.PluginPermissions;
-import utils.StringUtils;
-import utils.messages.MessageSystem;
-import utils.messages.enums.MessageID;
-import utils.messages.enums.MessageType;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -24,6 +14,16 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.jetbrains.annotations.NotNull;
+import sorting.CategorizerManager;
+import sorting.SortingPattern;
+import sorting.categorizer.Categorizer;
+import utils.PluginPermissions;
+import utils.SortingAdminUtils;
+import utils.StringUtils;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageID;
+import utils.messages.enums.MessageType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +35,7 @@ import java.util.Objects;
  */
 public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
+    public static final String COMMAND_ALIAS = "sortingadmin";
     private final String autosortProperty = "default autosort";
     private final String categoriesProperty = "default categoryOrder";
     private final String cooldownProperty = "cooldown (in ms)";
@@ -42,9 +43,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
     private final String activeProperty = "cooldownActive";
     private final String chatNotificationProperty = "chat sorting notification";
     private final String clickSortProperty = "default clicksort";
-
     private final CommandTree cmdTree;
-    public static final String COMMAND_ALIAS = "sortingadmin";
 
     public SortingAdminCommand() {
         cmdTree = new CommandTree(COMMAND_ALIAS);
@@ -84,6 +83,10 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/sortingadmin refill type true/false", this::setRefill, Boolean.class);
     }
 
+    public static List<String> getCategoriesFromArguments(String[] args) {
+        return new ArrayList<>(Arrays.asList(args).subList(2, args.length));
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         cmdTree.execute(sender, cmd, label, args);
@@ -106,8 +109,8 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         String soundName = tuple.args[2];
         float volume = 1F;
         float pitch = 1F;
-        if(tuple.args.length > 3) volume = Float.parseFloat(tuple.args[3]);
-        if(tuple.args.length > 4) pitch = Float.parseFloat(tuple.args[4]);
+        if (tuple.args.length > 3) volume = Float.parseFloat(tuple.args[3]);
+        if (tuple.args.length > 4) pitch = Float.parseFloat(tuple.args[4]);
 
         Sound sound = SortingAdminUtils.getSoundByName(soundName);
 
@@ -153,14 +156,14 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
                 key = activeProperty;
                 List<CMRegistry.CMIdentifier> dmi = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
                         (c -> tuple.args[1].equalsIgnoreCase(c.toString())).toList();
-                if(dmi.size() >= 1){
+                if (dmi.size() >= 1) {
                     value = String.valueOf(PluginConfigManager.isCooldownActive(dmi.get(0)));
                 }
             } else {
                 key = cooldownProperty;
                 List<CMRegistry.CMIdentifier> dmi = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
                         (c -> tuple.args[1].equalsIgnoreCase(c.toString())).toList();
-                if(dmi.size() >= 1){
+                if (dmi.size() >= 1) {
                     value = String.valueOf(PluginConfigManager.getCooldown(dmi.get(0)));
                 }
             }
@@ -195,7 +198,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         if (StringUtils.isStringBoolean(sender, bool)) {
             boolean b = Boolean.parseBoolean(bool);
             PluginConfigManager.setDefaultClickSort(b);
-            MessageSystem.sendChangedValue(sender, clickSortProperty, String.valueOf(bool));
+            MessageSystem.sendChangedValue(sender, clickSortProperty, bool);
         }
     }
 
@@ -310,10 +313,6 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    public static List<String> getCategoriesFromArguments(String[] args) {
-        return new ArrayList<>(Arrays.asList(args).subList(2, args.length));
-    }
-
     private void removeCategory(CommandTuple tuple) {
         CategorizerManager.removeCategoryAndSave(tuple.args[2], tuple.sender);
     }
@@ -396,7 +395,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private CMRegistry.CMIdentifier getIDByString(String str){
+    private CMRegistry.CMIdentifier getIDByString(String str) {
         return Arrays.stream(CMRegistry.CMIdentifier.values()).
                 filter(i -> i.toString().equalsIgnoreCase(str)).toList().get(0);
     }

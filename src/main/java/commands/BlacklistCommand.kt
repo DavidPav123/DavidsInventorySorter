@@ -1,6 +1,5 @@
 package commands
 
-import commands.BlacklistCommand.BlacklistType
 import commands.datastructures.CommandTree
 import commands.datastructures.CommandTuple
 import config.PluginConfigManager
@@ -65,7 +64,7 @@ class BlacklistCommand : CommandExecutor, TabCompleter {
     }
 
     private fun getListType(args: Array<String>): BlacklistType? {
-        if (args.size >= 1) {
+        if (args.isNotEmpty()) {
             if (args[0].equals(stackingSubCommand, ignoreCase = true)) {
                 return BlacklistType.STACKING
             } else if (args[0].equals(inventorySubCommand, ignoreCase = true)) {
@@ -78,7 +77,7 @@ class BlacklistCommand : CommandExecutor, TabCompleter {
     }
 
     private fun getList(args: Array<String>): MutableList<Material?>? {
-        if (args.size >= 1) {
+        if (args.isNotEmpty()) {
             if (args[0].equals(stackingSubCommand, ignoreCase = true)) {
                 return PluginConfigManager.getBlacklistStacking()
             } else if (args[0].equals(inventorySubCommand, ignoreCase = true)) {
@@ -275,7 +274,7 @@ class BlacklistCommand : CommandExecutor, TabCompleter {
      * to send.
      */
     private fun printBlacklist(sender: CommandSender, pageString: String, list: List<Material?>?) {
-        if (list!!.size == 0) {
+        if (list!!.isEmpty()) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EMPTY, sender)
         } else {
             val names = list.stream().map { item: Material? -> item!!.name.lowercase(Locale.getDefault()) }

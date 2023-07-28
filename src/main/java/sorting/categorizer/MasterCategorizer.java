@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MasterCategorizer extends Categorizer{
 
-    private List<String> subCategorizers;
+    private final List<String> subCategorizers;
 
     public MasterCategorizer(MasterCategory masterCategory) {
         this.name = masterCategory.getName();

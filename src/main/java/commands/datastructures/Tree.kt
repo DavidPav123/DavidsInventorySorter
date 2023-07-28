@@ -26,7 +26,7 @@ open class Tree<T>(rootValue: T) : Iterable<GraphNode<T>?> {
         return null
     }
 
-    fun toList(node: GraphNode<T>): MutableList<GraphNode<T>> {
+    private fun toList(node: GraphNode<T>): MutableList<GraphNode<T>> {
         var list: MutableList<GraphNode<T>> = ArrayList()
         list.add(node)
         for (child in node.children) {

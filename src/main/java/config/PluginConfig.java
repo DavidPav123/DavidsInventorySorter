@@ -90,12 +90,11 @@ public class PluginConfig {
 	 * Saves this {@code FileConfiguration} to the ChestCleaner folder. If the
 	 * file does not exist, it will be created. If it already exists, it will be
 	 * overwritten.
-	 *
 	 * This method will save using the system default encoding, or possibly using
 	 * UTF8.
 	 *
 	 * @param configFile the file in which the FileConfiguration should be saved in.
-	 * @param config     the FileCondiguration that should get saved into the file.
+	 * @param config     the FileConfiguration that should get saved into the file.
 	 */
 	private static void save(File configFile, FileConfiguration config) {
 
@@ -143,7 +142,6 @@ public class PluginConfig {
 		BLACKLIST_AUTOREFILL("blacklist.autorefill"),
 		COOLDOWN_TIME("cooldown.time"),
 		COOLDOWN_ACTIVE("cooldown.active"),
-		UPDATE_CHECKER_ACTIVE("updateMessage"),
 		CATEGORIES_WORDS("categories.words"),
 		CATEGORIES_LISTS("categories.lists"),
 		CATEGORIES_MASTER("categories.master"),

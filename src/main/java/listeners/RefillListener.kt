@@ -24,10 +24,9 @@ import utils.PluginPermissions
 import java.util.*
 
 class RefillListener : Listener {
-    private val specialBlockRefills: HashMap<Material?, Material>
+    private val specialBlockRefills: HashMap<Material?, Material> = HashMap()
 
     init {
-        specialBlockRefills = HashMap()
         try {
             specialBlockRefills[Material.WHEAT] = Material.WHEAT_SEEDS
             specialBlockRefills[Material.BEETROOTS] = Material.BEETROOT_SEEDS

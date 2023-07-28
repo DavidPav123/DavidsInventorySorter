@@ -47,17 +47,13 @@ class SortingConfigCommand : CommandExecutor, TabCompleter {
         // autoSort
         cmdTree.addPath("/sortingconfig autosort") { tuple: CommandTuple -> getConfig(tuple) }
         cmdTree.addPath(
-            "/sortingconfig autosort true/false",
-            { tuple: CommandTuple -> setAutoSort(tuple) },
-            Boolean::class.java
+            "/sortingconfig autosort true/false", { tuple: CommandTuple -> setAutoSort(tuple) }, Boolean::class.java
         )
         // categories
         cmdTree.addPath("/sortingconfig categories") { tuple: CommandTuple -> getConfig(tuple) }
         cmdTree.addPath("/sortingconfig categories list") { tuple: CommandTuple -> getCategoryList(tuple) }
         cmdTree.addPath(
-            "/sortingconfig categories list page",
-            { tuple: CommandTuple -> getCategoryList(tuple) },
-            Int::class.java
+            "/sortingconfig categories list page", { tuple: CommandTuple -> getCategoryList(tuple) }, Int::class.java
         )
         cmdTree.addPath("/sortingconfig categories reset") { tuple: CommandTuple -> resetCategories(tuple) }
         cmdTree.addPath(
@@ -69,9 +65,7 @@ class SortingConfigCommand : CommandExecutor, TabCompleter {
         // pattern
         cmdTree.addPath("/sortingconfig pattern") { tuple: CommandTuple -> getConfig(tuple) }
         cmdTree.addPath(
-            "/sortingconfig pattern pattern",
-            { tuple: CommandTuple -> setPattern(tuple) },
-            SortingPattern::class.java
+            "/sortingconfig pattern pattern", { tuple: CommandTuple -> setPattern(tuple) }, SortingPattern::class.java
         )
         // chatNotification
         cmdTree.addPath("/sortingconfig chatNotification") { tuple: CommandTuple -> getConfig(tuple) }
@@ -83,14 +77,10 @@ class SortingConfigCommand : CommandExecutor, TabCompleter {
         // refill
         cmdTree.addPath("/sortingconfig refill type", null, RefillType::class.java)
         cmdTree.addPath(
-            "/sortingconfig refill type true/false",
-            { tuple: CommandTuple -> setRefill(tuple) },
-            Boolean::class.java
+            "/sortingconfig refill type true/false", { tuple: CommandTuple -> setRefill(tuple) }, Boolean::class.java
         )
         cmdTree.addPath(
-            "/sortingconfig refill true/false",
-            { tuple: CommandTuple -> setAllRefills(tuple) },
-            Boolean::class.java
+            "/sortingconfig refill true/false", { tuple: CommandTuple -> setAllRefills(tuple) }, Boolean::class.java
         )
         // sortingSound
         cmdTree.addPath("/sortingconfig sortingSound") { tuple: CommandTuple -> getConfig(tuple) }
@@ -102,9 +92,7 @@ class SortingConfigCommand : CommandExecutor, TabCompleter {
         // clickSort
         cmdTree.addPath("/sortingconfig clickSort") { tuple: CommandTuple -> getConfig(tuple) }
         cmdTree.addPath(
-            "/sortingconfig clickSort true/false",
-            { tuple: CommandTuple -> setClickSort(tuple) },
-            Boolean::class.java
+            "/sortingconfig clickSort true/false", { tuple: CommandTuple -> setClickSort(tuple) }, Boolean::class.java
         )
         // reset
         cmdTree.addPath("/sortingconfig reset") { tuple: CommandTuple -> resetConfiguration(tuple) }
@@ -153,8 +141,7 @@ class SortingConfigCommand : CommandExecutor, TabCompleter {
         }
         if (key != "" && value != "") {
             MessageSystem.sendMessageToCSWithReplacement(
-                MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, p, key,
-                value
+                MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, p, key, value
             )
         }
     }
@@ -194,22 +181,19 @@ class SortingConfigCommand : CommandExecutor, TabCompleter {
         if (StringUtils.isStringBoolean(player, bool)) {
             val b = java.lang.Boolean.parseBoolean(bool)
             val property: String = if (arg.equals(blocksSubCommand, ignoreCase = true) && checkPermission(
-                    player,
-                    PluginPermissions.CMD_SORTING_CONFIG_REFILL_BLOCKS
+                    player, PluginPermissions.CMD_SORTING_CONFIG_REFILL_BLOCKS
                 )
             ) {
                 PlayerDataManager.setRefillBlocks(player, b)
                 blocksSubCommand
             } else if (arg.equals(consumablesSubCommand, ignoreCase = true) && checkPermission(
-                    player,
-                    PluginPermissions.CMD_SORTING_CONFIG_REFILL_CONSUMABLES
+                    player, PluginPermissions.CMD_SORTING_CONFIG_REFILL_CONSUMABLES
                 )
             ) {
                 PlayerDataManager.setRefillConumables(player, b)
                 consumablesSubCommand
             } else if (arg.equals(breakablesSubCommand, ignoreCase = true) && checkPermission(
-                    player,
-                    PluginPermissions.CMD_SORTING_CONFIG_REFILL_BREAKABLES
+                    player, PluginPermissions.CMD_SORTING_CONFIG_REFILL_BREAKABLES
                 )
             ) {
                 PlayerDataManager.setRefillBreakables(player, b)
@@ -218,8 +202,7 @@ class SortingConfigCommand : CommandExecutor, TabCompleter {
                 return false
             }
             MessageSystem.sendMessageToCSWithReplacement(
-                MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, player,
-                property, b
+                MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, player, property, b
             )
         }
         return true
