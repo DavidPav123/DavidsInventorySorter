@@ -1,6 +1,6 @@
 package com.github.davidpav123.inventorysorter
 
-import commands.*
+import commands.CleanInventoryCommand
 import config.PluginConfig
 import config.serializable.ListCategory
 import config.serializable.MasterCategory
@@ -25,7 +25,7 @@ class InventorySorter : JavaPlugin() {
         ConfigurationSerialization.registerClass(ListCategory::class.java)
         ConfigurationSerialization.registerClass(MasterCategory::class.java)
         PluginConfig.getInstance().loadConfig()
-        val version = description.version.replace(".", "-")
+        val version = pluginMeta.version.replace(".", "-")
         val bundleName = name + "_" + version
         getPlugin(this.javaClass).saveResource(bundleName + "_en_GB.properties", false)
         try {
@@ -36,10 +36,6 @@ class InventorySorter : JavaPlugin() {
             e.printStackTrace()
         }
         Objects.requireNonNull(getCommand(CleanInventoryCommand.COMMAND_ALIAS))?.setExecutor(CleanInventoryCommand())
-        Objects.requireNonNull(getCommand(CleaningItemCommand.COMMAND_ALIAS))?.setExecutor(CleaningItemCommand())
-        Objects.requireNonNull(getCommand(BlacklistCommand.COMMAND_ALIAS))?.setExecutor(BlacklistCommand())
-        Objects.requireNonNull(getCommand(SortingConfigCommand.COMMAND_ALIAS))?.setExecutor(SortingConfigCommand())
-        Objects.requireNonNull(getCommand(SortingAdminCommand.COMMAND_ALIAS))?.setExecutor(SortingAdminCommand())
         Bukkit.getPluginManager().registerEvents(SortingListener(), this)
         Bukkit.getPluginManager().registerEvents(RefillListener(), this)
     }
@@ -50,6 +46,6 @@ class InventorySorter : JavaPlugin() {
 
     companion object {
         @JvmField
-		var main: InventorySorter? = null
+        var main: InventorySorter? = null
     }
 }

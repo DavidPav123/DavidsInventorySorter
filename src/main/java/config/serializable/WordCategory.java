@@ -1,9 +1,9 @@
 package config.serializable;
 
-import org.jetbrains.annotations.NotNull;
-import utils.StringUtils;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,8 +44,8 @@ public class WordCategory implements Category<String> {
 
     // not "unused". Needed for ConfigurationSerializable e.g. To read as Object from config.yml
     public static WordCategory deserialize(Map<String, Object> map) {
-        String name = map.containsKey(nameKey) ? ((String)map.get(nameKey)) : "";
-        String word = map.containsKey(wordKey) ? ((String)map.get(wordKey)) : "";
+        String name = map.containsKey(nameKey) ? ((String) map.get(nameKey)) : "";
+        String word = map.containsKey(wordKey) ? ((String) map.get(wordKey)) : "";
 
         return new WordCategory(name, word);
     }

@@ -1,44 +1,36 @@
-package utils;
+package utils
 
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemStack
 
-import java.util.Comparator;
-import java.util.List;
-
-public class Quicksort {
-
-    public static List<ItemStack> sort(List<ItemStack> items, Comparator<ItemStack> comparator, int l, int r) {
-        int q;
+object Quicksort {
+    fun sort(items: List<ItemStack>, comparator: Comparator<ItemStack>, l: Int, r: Int): List<ItemStack> {
+        val q: Int
         if (l < r) {
-            q = partition(items, comparator, l, r);
-            sort(items, comparator, l, q);
-            sort(items, comparator, q + 1, r);
+            q = partition(items.toMutableList(), comparator, l, r)
+            sort(items, comparator, l, q)
+            sort(items, comparator, q + 1, r)
         }
-        return items;
+        return items
     }
 
-    private static int partition(List<ItemStack> items, Comparator<ItemStack> comparator, int l, int r) {
-
-        int i = l - 1;
-        int j = r + 1;
-        ItemStack item = items.get((l + r) / 2);
+    private fun partition(items: MutableList<ItemStack>, comparator: Comparator<ItemStack>, l: Int, r: Int): Int {
+        var i = l - 1
+        var j = r + 1
+        val item = items[(l + r) / 2]
         while (true) {
             do {
-                i++;
-            } while (comparator.compare(items.get(i), item) < 0);
-
+                i++
+            } while (comparator.compare(items[i], item) < 0)
             do {
-                j--;
-            } while (comparator.compare(item, items.get(j)) < 0);
-
+                j--
+            } while (comparator.compare(item, items[j]) < 0)
             if (i < j) {
-                ItemStack k = items.get(i);
-                items.set(i, items.get(j));
-                items.set(j, k);
+                val k = items[i]
+                items[i] = items[j]
+                items[j] = k
             } else {
-                return j;
+                return j
             }
         }
     }
-
 }

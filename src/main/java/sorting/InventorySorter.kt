@@ -36,9 +36,9 @@ object InventorySorter {
             if (PluginConfigManager.getBlacklistStacking().contains(item!!.type)) {
                 newList.add(item)
             } else {
-                val existingItem = newList.stream()
-                    .filter { tempItem: ItemStack? -> tempItem!!.isSimilar(item) }
-                    .findFirst().orElse(null)
+                val existingItem =
+                    newList.stream().filter { tempItem: ItemStack? -> tempItem!!.isSimilar(item) }.findFirst()
+                        .orElse(null)
                 if (existingItem == null) {
                     newList.add(item)
                 } else {
@@ -83,38 +83,48 @@ object InventorySorter {
      */
     @JvmOverloads
     fun sortInventory(
-        inv: Inventory?,
-        p: Player?,
-        items: List<ItemStack?> = InventoryConverter.getArrayListFromInventory(inv)
+        inv: Inventory?, p: Player?, items: ArrayList<ItemStack>? = InventoryConverter.getArrayListFromInventory(inv)
     ): Boolean {
         var items = items
-        val event = SortingEvent(p!!, inv!!, items)
-        Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) {
-            return false
+        val event = items?.let { SortingEvent(p!!, inv!!, it) }
+        if (event != null) {
+            Bukkit.getPluginManager().callEvent(event)
+        }
+        if (event != null) {
+            if (event.isCancelled) {
+                return false
+            }
         }
         var categoryNames = PluginConfigManager.getCategoryOrder()
         var pattern = PluginConfigManager.getDefaultPattern()
-        if (items.isEmpty()) {
-            return false
+        if (items != null) {
+            if (items.isEmpty()) {
+                return false
+            }
         }
-        if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.string)) {
-            categoryNames = getCategoryOrder(p)
+        if (p != null) {
+            if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.string)) {
+                categoryNames = getCategoryOrder(p)
+            }
         }
-        if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.string)) {
-            pattern = getSortingPattern(p)
+        if (p != null) {
+            if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.string)) {
+                pattern = getSortingPattern(p)
+            }
         }
         if (!CategorizerManager.validateExists(categoryNames)) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_INVALID, p)
             return false
         }
-        if (items.size <= 1) {
-            InventoryConverter.setItemsOfInventory(inv, items, pattern)
-            return true
+        if (items != null) {
+            if (items.size <= 1) {
+                InventoryConverter.setItemsOfInventory(inv, items, pattern)
+                return true
+            }
         }
-        items = reduceStacks(items)
-        items = CategorizerManager.sort(items, categoryNames)
-        items = expandStacks(items)
+        items = items?.let { reduceStacks(it) } as ArrayList<ItemStack>?
+        items = CategorizerManager.sort(items, categoryNames) as ArrayList<ItemStack>?
+        items = items?.let { expandStacks(it) } as ArrayList<ItemStack>?
         InventoryConverter.setItemsOfInventory(inv, items, pattern)
         return true
     }
@@ -147,8 +157,10 @@ object InventorySorter {
         }
         if (flag) {
             p.world.playSound(
-                p.location, PluginConfigManager.getDefaultSortingSound(),
-                PluginConfigManager.getDefaultVolume(), PluginConfigManager.getDefaultPitch()
+                p.location,
+                PluginConfigManager.getDefaultSortingSound(),
+                PluginConfigManager.getDefaultVolume(),
+                PluginConfigManager.getDefaultPitch()
             )
         }
     }

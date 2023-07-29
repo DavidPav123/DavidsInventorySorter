@@ -1,15 +1,7 @@
 package commands.datastructures;
 
-import commands.BlacklistCommand;
-import commands.SortingAdminCommand;
 import cooldown.CMRegistry;
 import cooldown.CooldownManager;
-import sorting.CategorizerManager;
-import sorting.SortingPattern;
-import sorting.categorizer.Categorizer;
-import utils.SortingAdminUtils;
-import utils.messages.MessageSystem;
-import utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,6 +9,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import sorting.CategorizerManager;
+import sorting.SortingPattern;
+import sorting.categorizer.Categorizer;
+import utils.SortingAdminUtils;
+import utils.messages.MessageSystem;
+import utils.messages.enums.MessageType;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -26,6 +24,7 @@ import java.util.stream.Collectors;
 /**
  * An acyclic directed tree structure representing a command. A node holds an alias and a lambda Consumer.
  * It offers many useful methods that reduces the work which needs to be done creating new spigot command.
+ *
  * @see <a href="https://github.com/tom2208/ChestCleaner/wiki/CommandTree">GitHub Wiki: CommandTree</a>
  */
 public class CommandTree extends Tree<CommandTree.Quadruple> {
@@ -84,20 +83,17 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         }
 
         // Cooldown CMDIdentifier
-        else if(isType.test(CMRegistry.CMIdentifier.class)){
-            List<CMRegistry.CMIdentifier> list =
-                    Arrays.stream(CMRegistry.CMIdentifier.values()).
-                            filter(c -> c.toString().equalsIgnoreCase(str)).toList();
+        else if (isType.test(CMRegistry.CMIdentifier.class)) {
+            List<CMRegistry.CMIdentifier> list = Arrays.stream(CMRegistry.CMIdentifier.values()).filter(c -> c.toString().equalsIgnoreCase(str)).toList();
 
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 return list.get(0);
             }
         }
 
         //Player
         else if (isType.test(Player.class)) {
-            List<Player> list = Bukkit.getOnlinePlayers().stream().filter(
-                    e -> e.getName().equalsIgnoreCase(str)).collect(Collectors.toList());
+            List<Player> list = Bukkit.getOnlinePlayers().stream().filter(e -> e.getName().equalsIgnoreCase(str)).collect(Collectors.toList());
             if (list.size() == 1) {
                 return list.get(0);
             }
@@ -118,18 +114,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             return CategorizerManager.getByName(str);
         }
 
-        // RefillType
-        else if (isType.test(SortingAdminCommand.RefillType.class)) {
-            return SortingAdminCommand.RefillType.getByName(str);
-        }
-
-        // Blacklist
-        else if (isType.test(BlacklistCommand.BlacklistType.class)) {
-            return BlacklistCommand.BlacklistType.getBlackListTypeByString(str);
-        }
 
         // Sound
-        else if(isType.test(Sound.class)){
+        else if (isType.test(Sound.class)) {
             return SortingAdminUtils.getSoundByName(str);
         }
 
@@ -159,10 +146,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         }
 
         // SortingPattern
-        else if(isType.test(SortingPattern.class)){
-            List<?> list = Arrays.stream(SortingPattern.values()).
-                    filter(p -> p.toString().equalsIgnoreCase(str)).toList();
-            if(list.size() > 0){
+        else if (isType.test(SortingPattern.class)) {
+            List<?> list = Arrays.stream(SortingPattern.values()).filter(p -> p.toString().equalsIgnoreCase(str)).toList();
+            if (!list.isEmpty()) {
                 return list.get(0);
             }
         }
@@ -221,8 +207,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         for (int i = 1; i < args.length; i++) {
             final int finalI = i;
-            GraphNode<Quadruple> tempNode
-                    = getNodeFormChildren(node, t -> t.label.equalsIgnoreCase(args[finalI]));
+            GraphNode<Quadruple> tempNode = getNodeFormChildren(node, t -> t.label.equalsIgnoreCase(args[finalI]));
 
             boolean isLastElement = i + 1 >= args.length;
 
@@ -330,24 +315,20 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             list.add(node.value.label);
         } else if (isType.test(Player.class)) {
             list = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
-        } else if (isType.test(BlacklistCommand.BlacklistType.class)) {
-            list = Arrays.stream(BlacklistCommand.BlacklistType.values()).map(Enum::toString).collect(Collectors.toList());
         } else if (isType.test(Boolean.class)) {
             list.add("true");
             list.add("false");
         } else if (isType.test(Material.class)) {
             list = Arrays.stream(Material.values()).map(Enum::toString).collect(Collectors.toList());
-        } else if (isType.test(SortingAdminCommand.RefillType.class)) {
-            list = Arrays.stream(SortingAdminCommand.RefillType.values()).map(Enum::toString).collect(Collectors.toList());
         } else if (isType.test(Categorizer.class)) {
             list = CategorizerManager.getAllNames();
         } else if (isType.test(CooldownManager.class)) {
             list = Arrays.stream(CMRegistry.CMIdentifier.values()).map(Enum::toString).collect(Collectors.toList());
-        } else if (isType.test(Sound.class)){
+        } else if (isType.test(Sound.class)) {
             list = Arrays.stream(Sound.values()).map(Enum::toString).collect(Collectors.toList());
-        } else if (isType.test(CMRegistry.CMIdentifier.class)){
+        } else if (isType.test(CMRegistry.CMIdentifier.class)) {
             list = Arrays.stream(CMRegistry.CMIdentifier.values()).map(Enum::toString).collect(Collectors.toList());
-        } else if(isType.test(SortingPattern.class)){
+        } else if (isType.test(SortingPattern.class)) {
             list = Arrays.stream(SortingPattern.values()).map(Enum::toString).collect(Collectors.toList());
         }
         return list;
@@ -415,8 +396,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Quadruple quadruple = (Quadruple) o;
-            return definiteExecute == quadruple.definiteExecute && Objects.equals(label, quadruple.label) &&
-                    Objects.equals(consumer, quadruple.consumer) && Objects.equals(type, quadruple.type);
+            return definiteExecute == quadruple.definiteExecute && Objects.equals(label, quadruple.label) && Objects.equals(consumer, quadruple.consumer) && Objects.equals(type, quadruple.type);
         }
 
         public String toString() {

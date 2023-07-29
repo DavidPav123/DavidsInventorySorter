@@ -20,7 +20,6 @@ import utils.BlockDetector
 import utils.InventoryDetector
 import utils.PluginPermissions
 import utils.SortingUtils
-import utils.messages.MessageSystem
 
 /**
  * @author Tom2208

@@ -1,25 +1,20 @@
-package sorting.categorizer;
+package sorting.categorizer
 
-import config.serializable.MasterCategory;
-import sorting.CategorizerManager;
-import org.bukkit.inventory.ItemStack;
+import config.serializable.MasterCategory
+import org.bukkit.inventory.ItemStack
+import sorting.CategorizerManager
 
-import java.util.ArrayList;
-import java.util.List;
+class MasterCategorizer(masterCategory: MasterCategory) : Categorizer() {
+    private val subCategorizers: List<String>
 
-public class MasterCategorizer extends Categorizer{
-
-    private final List<String> subCategorizers;
-
-    public MasterCategorizer(MasterCategory masterCategory) {
-        this.name = masterCategory.getName();
-        this.subCategorizers = masterCategory.getValue();
+    init {
+        name = masterCategory.getName()
+        subCategorizers = masterCategory.value
     }
 
-    @Override
-    public List<List<ItemStack>> doCategorization(List<ItemStack> items) {
-        List<List<ItemStack>> returnItems = new ArrayList<>();
-        returnItems.add(CategorizerManager.sort(items, subCategorizers));
-        return returnItems;
+    override fun doCategorization(items: List<ItemStack>): List<List<ItemStack>> {
+        val returnItems: MutableList<List<ItemStack>> = ArrayList()
+        returnItems.add(CategorizerManager.sort(items, subCategorizers))
+        return returnItems
     }
 }

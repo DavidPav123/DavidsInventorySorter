@@ -8,7 +8,6 @@ group = 'com.github.davidpav123'
 version = '1.0'
 
 repositories {
-    jcenter()
     mavenCentral()
     maven {
         name = "papermc-repo"
@@ -21,9 +20,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT"
+    implementation "io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation "net.kyori:adventure-api:4.14.0"
 }
 
 def targetJavaVersion = 17
@@ -31,14 +30,12 @@ java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
 }
 
 tasks.withType(JavaCompile).configureEach {
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release = targetJavaVersion
+    if (JavaVersion.current() < JavaVersion.toVersion(targetJavaVersion)) {
+        options.compilerArgs.addAll(["--release", targetJavaVersion.toString()])
     }
 }
 
@@ -50,13 +47,7 @@ processResources {
         expand props
     }
 }
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
+tasks.compileKotlin {
+    kotlinOptions.jvmTarget = "17"
 }

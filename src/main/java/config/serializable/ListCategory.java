@@ -1,9 +1,9 @@
 package config.serializable;
 
-import org.jetbrains.annotations.NotNull;
-import utils.StringUtils;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +45,8 @@ public class ListCategory implements Category<List<String>> {
 
     // not "unused". Needed for ConfigurationSerializable e.g. To read as Object from config.yml
     public static ListCategory deserialize(Map<String, Object> map) {
-        String name = map.containsKey(nameKey) ? ((String)map.get(nameKey)) : "";
-        List<String> list = map.containsKey(listKey) ? ((List<String>)map.get(listKey)) : null;
+        String name = map.containsKey(nameKey) ? ((String) map.get(nameKey)) : "";
+        List<String> list = map.containsKey(listKey) ? ((List<String>) map.get(listKey)) : null;
 
         return new ListCategory(name, list);
     }

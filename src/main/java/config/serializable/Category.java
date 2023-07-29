@@ -7,11 +7,11 @@ import org.bukkit.inventory.ItemStack;
  * Configurable Category Interface.
  * Every Configurable Category must implement this interface.
  * It defines how the Category gets serialized and how it gets written into a minecraft book
+ *
  * @param <T>
  */
 public interface Category<T> extends ConfigurationSerializable {
     /**
-     *
      * @return the name of the category
      */
     String getName();

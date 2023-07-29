@@ -10,7 +10,7 @@ open class CMRegistry protected constructor() {
     private val cmMap: MutableMap<CMIdentifier, CooldownManager>
 
     init {
-        cmMap = EnumMap(cooldown.CMRegistry.CMIdentifier::class.java)
+        cmMap = EnumMap(CMIdentifier::class.java)
         register(CMIdentifier.SORTING, PlayerCM(MessageID.ERROR_YOU_COOLDOWN_SORTING, CMIdentifier.SORTING))
         register(
             CMIdentifier.CLEANING_ITEM_GET,

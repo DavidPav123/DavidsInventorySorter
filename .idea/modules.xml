@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DavidsInventorySorter.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DavidsInventorySorter.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DavidsInventorySorter.test.iml" filepath="$PROJECT_DIR$/.idea/modules/DavidsInventorySorter.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.github.davidpav123.DavidsInventorySorter.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.github.davidpav123.DavidsInventorySorter.main.iml" />
     </modules>
   </component>
 </project>

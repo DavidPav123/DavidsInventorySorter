@@ -13,8 +13,8 @@ enum class SortingPattern {
          * @param str the name of the enum entry.
          * @return the enum entry object or `null` if it does not exist.
          */
-		@JvmStatic
-		fun getSortingPatternByName(str: String?): SortingPattern? {
+        @JvmStatic
+        fun getSortingPatternByName(str: String?): SortingPattern? {
             if (str == null) return null
             if (str.equals(BOTTOM_TO_TOP_LEFT_TO_RIGHT.name, ignoreCase = true)) {
                 return BOTTOM_TO_TOP_LEFT_TO_RIGHT

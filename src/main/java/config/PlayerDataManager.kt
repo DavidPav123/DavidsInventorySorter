@@ -14,7 +14,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun isClickSort(player: Player?): Boolean {
+    fun isClickSort(player: Player?): Boolean {
         return if (PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.CLICK_SORT.getPath(player))) {
             PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.CLICK_SORT.getPath(player))
         } else {
@@ -36,12 +36,12 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun isRefillConumables(p: Player?): Boolean {
+    fun isRefillConumables(p: Player?): Boolean {
         return PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.REFILL_CONSUMABLES.getPath(p))
     }
 
     @JvmStatic
-	fun containsRefillConumables(p: Player?): Boolean {
+    fun containsRefillConumables(p: Player?): Boolean {
         return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.REFILL_CONSUMABLES.getPath(p))
     }
 
@@ -50,12 +50,12 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun isRefillBlocks(p: Player?): Boolean {
+    fun isRefillBlocks(p: Player?): Boolean {
         return PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.REFILL_BLOCKS.getPath(p))
     }
 
     @JvmStatic
-	fun containsRefillBlocks(p: Player?): Boolean {
+    fun containsRefillBlocks(p: Player?): Boolean {
         return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.REFILL_BLOCKS.getPath(p))
     }
 
@@ -64,12 +64,12 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun isRefillBreakables(p: Player?): Boolean {
+    fun isRefillBreakables(p: Player?): Boolean {
         return PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.REFILL_BREAKABLE_ITEMS.getPath(p))
     }
 
     @JvmStatic
-	fun containsRefillBreakables(p: Player?): Boolean {
+    fun containsRefillBreakables(p: Player?): Boolean {
         return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.REFILL_BREAKABLE_ITEMS.getPath(p))
     }
 
@@ -78,7 +78,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun getSortingPattern(p: Player?): SortingPattern {
+    fun getSortingPattern(p: Player?): SortingPattern {
         val pattern = SortingPattern.getSortingPatternByName(
             PluginConfig.getPlayerData().getString(PluginConfig.PlayerDataPath.PATTERN.getPath(p))
         )
@@ -86,7 +86,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun containsNotification(p: Player?): Boolean {
+    fun containsNotification(p: Player?): Boolean {
         return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.NOTIFICATION.getPath(p))
     }
 
@@ -95,7 +95,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun isNotification(p: Player?): Boolean {
+    fun isNotification(p: Player?): Boolean {
         return if (PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.NOTIFICATION.getPath(p))) {
             PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.NOTIFICATION.getPath(p))
         } else {
@@ -104,7 +104,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun containsSortingSound(p: Player?): Boolean {
+    fun containsSortingSound(p: Player?): Boolean {
         return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.SOUND.getPath(p))
     }
 
@@ -113,7 +113,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun isSortingSound(p: Player?): Boolean {
+    fun isSortingSound(p: Player?): Boolean {
         return if (PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.SOUND.getPath(p))) {
             PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.SOUND.getPath(p))
         } else {
@@ -126,7 +126,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun isAutoSort(p: Player?): Boolean {
+    fun isAutoSort(p: Player?): Boolean {
         return if (PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.AUTOSORT.getPath(p))) {
             PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.AUTOSORT.getPath(p))
         } else {
@@ -135,7 +135,7 @@ object PlayerDataManager {
     }
 
     @JvmStatic
-	fun getCategoryOrder(p: Player?): List<String> {
+    fun getCategoryOrder(p: Player?): List<String> {
         val list = PluginConfig.getPlayerData().getStringList(PluginConfig.PlayerDataPath.CATEGORIES_ORDER.getPath(p))
         return list.ifEmpty { PluginConfigManager.getCategoryOrder() }
     }

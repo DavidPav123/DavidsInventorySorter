@@ -2,7 +2,6 @@ package sorting.categorizer
 
 import config.serializable.ListCategory
 import org.bukkit.inventory.ItemStack
-import java.lang.Boolean
 import java.util.*
 import java.util.stream.Collectors
 import kotlin.Comparator
@@ -27,9 +26,9 @@ class ListCategoryCategorizer(listCategory: ListCategory) : Categorizer() {
     override fun doCategorization(items: List<ItemStack>): List<List<ItemStack>> {
         val returnItems: MutableList<List<ItemStack>> = ArrayList()
         val map = predicateCategorizer.doCategorizationGetMap(items)
-        val sortedList = comparatorCategorizer.doCategorizationGetList(map[Boolean.TRUE]!!)
+        val sortedList = comparatorCategorizer.doCategorizationGetList(map[Boolean.equals(true)]!!)
         returnItems.add(sortedList)
-        returnItems.add(map[Boolean.FALSE]!!)
+        returnItems.add(map[Boolean.equals(false)]!!)
         return returnItems
     }
 }

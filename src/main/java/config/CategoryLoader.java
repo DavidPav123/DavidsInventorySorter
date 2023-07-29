@@ -3,12 +3,12 @@ package config;
 import config.serializable.ListCategory;
 import config.serializable.MasterCategory;
 import config.serializable.WordCategory;
+import org.bukkit.inventory.ItemStack;
 import sorting.CategorizerManager;
 import sorting.categorizer.ComparatorCategorizer;
 import sorting.categorizer.ListCategoryCategorizer;
 import sorting.categorizer.MasterCategorizer;
 import sorting.categorizer.PredicateCategorizer;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
 import java.util.List;
